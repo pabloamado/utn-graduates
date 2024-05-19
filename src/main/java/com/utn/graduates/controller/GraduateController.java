@@ -21,7 +21,7 @@ public class GraduateController {
     }
 
     @GetMapping("/search")
-    public List<GraduateDTO> searchGraduatesByDniStartsWith(@RequestParam(required = false) String dni) {
+    public List<GraduateDTO> searchByDni(@RequestParam(required = false) String dni) {
         if (dni != null) {
             return graduateService.getByDni(dni);
         } else {
@@ -30,7 +30,7 @@ public class GraduateController {
     }
 
     @GetMapping("/search-fullname")
-    public List<GraduateDTO> searchGraduatesByFullnameStartingWith(@RequestParam(required = false) String fullname) {
+    public List<GraduateDTO> searchByFullname(@RequestParam(required = false) String fullname) {
         if (!Strings.isBlank(fullname)) {
             return graduateService.getByFullname(fullname);
         } else {
