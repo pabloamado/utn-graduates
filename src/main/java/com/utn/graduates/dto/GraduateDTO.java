@@ -8,13 +8,21 @@ import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GraduateDTO implements Serializable {
-
+    private Long id;
     private String fullname;
     private String dni;
     private String description;
     private boolean known;
 
     public GraduateDTO() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     public String getFullname() {

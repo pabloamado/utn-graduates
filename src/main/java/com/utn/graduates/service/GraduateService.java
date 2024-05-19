@@ -39,6 +39,21 @@ public class GraduateService {
         return this.toGraduateDTO(graduates);
     }
 
+    public GraduateDTO updateGraduate(final Long id, final GraduateDTO graduateDTO) {
+        if (id == null || graduateDTO == null) {
+            //TODO throw exception
+        }
+        Graduate graduate = graduateRepository.findById(id).orElseThrow(() -> new RuntimeException(""));
+        return this.update(graduate, graduateDTO);
+    }
+
+    private GraduateDTO update(Graduate graduate, GraduateDTO graduateDTO) {
+        graduate.setDescription(graduateDTO.getDescription());
+        graduate.setKnown(graduateDTO.isKnown());
+        Graduate save = graduateRepository.save(graduate);
+        return this.objectMapper.convertValue(save, GraduateDTO.class);
+    }
+
     private List<GraduateDTO> toGraduateDTO(List<Graduate> graduates) {
         return graduates.stream().map(g -> objectMapper.convertValue(g, GraduateDTO.class)).collect(Collectors.toList());
     }
