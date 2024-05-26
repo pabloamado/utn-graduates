@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.utn.graduates.dto.GraduateDTO;
 import com.utn.graduates.model.Graduate;
 import com.utn.graduates.repository.GraduateRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,18 +28,17 @@ public class GraduateService {
         return this.toGraduateDTO(graduates);
     }
 
-    public List<GraduateDTO> getByFullname(final String fullname) {
-        List<Graduate> graduates = this.graduateRepository.findByFullname(fullname);
-        return this.toGraduateDTO(graduates);
-
+    public Page<GraduateDTO> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Graduate> graduatePage = graduateRepository.findAll(pageable);
+        Page<GraduateDTO> graduateDTOPage = graduatePage.map(graduate -> objectMapper.convertValue(graduate, GraduateDTO.class));
+        return graduateDTOPage;
     }
 
-    public List<GraduateDTO> getByDni(final String dni) {
-        List<Graduate> graduates = this.graduateRepository.findByDni(dni);
-        if (graduates.size() > 1) {
-            //TODO implementar preconditions para lanzar errores.
-        }
-        return this.toGraduateDTO(graduates);
+    public Page<GraduateDTO> getByParam(String param, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Graduate> graduatePage = graduateRepository.findByParam(param, pageable);
+        return graduatePage.map(g -> objectMapper.convertValue(g, GraduateDTO.class));
     }
 
     public GraduateDTO updateGraduate(final Long id, final GraduateDTO graduateDTO) {

@@ -2,17 +2,15 @@ version: '3.8'
 
 services:
   mysql:
-    image: mysql:8.0
-    container_name: mysql-container
+    image: mariadb:10.4
+    container_name: mariadb-local
     environment:
       MYSQL_ROOT_PASSWORD: "root"
-      MYSQL_DATABASE: "utn-graduates"
-      MYSQL_USER: "test"
-      MYSQL_PASSWORD: "test"
+      MYSQL_DATABASE: "graduates"
     ports:
-      - "3310:3306"
+      - "3306:3306"
     volumes:
-      - mysql-data:/var/lib/mysql
+      - ./support/env/dev/scripts:/docker-entrypoint-initdb.d:ro
 
 volumes:
   mysql-data:

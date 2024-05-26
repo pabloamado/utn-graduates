@@ -3,14 +3,13 @@ package com.utn.graduates.controller;
 import com.utn.graduates.dto.GraduateDTO;
 import com.utn.graduates.service.GraduateService;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/graduate")
@@ -23,20 +22,13 @@ public class GraduateController {
     }
 
     @GetMapping("/search")
-    public List<GraduateDTO> searchByDni(@RequestParam(required = false) String dni) {
-        if (dni != null) {
-            return graduateService.getByDni(dni);
+    public Page<GraduateDTO> searchByParam(@RequestParam(required = false) String param,
+                                           @RequestParam (defaultValue = "0") int page,
+                                           @RequestParam (defaultValue = "10") int size) {
+        if (!Strings.isEmpty(param)) {
+            return graduateService.getByParam(param, page, size);
         } else {
-            return graduateService.getAll();
-        }
-    }
-
-    @GetMapping("/search-fullname")
-    public List<GraduateDTO> searchByFullname(@RequestParam(required = false) String fullname) {
-        if (!Strings.isBlank(fullname)) {
-            return graduateService.getByFullname(fullname);
-        } else {
-            return graduateService.getAll();
+            return graduateService.getAll(page, size);
         }
     }
 
