@@ -66,28 +66,29 @@ public class FileService {
                 String dni = graduateData.get(DNI);
                 Preconditions.checkState(!csvDni.contains(dni), "The register is duplicated in the file, please check the csv file at line: " + lineNumber);
                 Preconditions.checkState(!existingDni.contains(dni), String.format("The register in line %s already exists", lineNumber));
-                Graduate graduate = this.createGraduate(graduateData, dni);
+                Graduate graduate = this.convertToEntity(graduateData, dni);
                 graduates.add(graduate);
                 csvDni.add(dni);
             }
 
             Preconditions.checkState(!CollectionUtils.isEmpty(graduates), "The registers to save are empty.");
             graduateRepository.saveAll(graduates);
-
+            LOGGER.info("saved successfully {} registers", graduates.size());
         } catch (Exception e) {
+            LOGGER.error("Failed to import graduates from csv file", e);
             throw new FileException(String.format("Failed to import CSV file. Error: %s", e));
         }
 
         return graduates.size();
     }
 
-    private Graduate createGraduate(final Map<String, String> graduateData, final String dni) {
+    private Graduate convertToEntity(final Map<String, String> graduateData, final String dni) {
         Graduate graduate = new Graduate();
         graduate.setFullname(graduateData.get(FULLNAME));
         graduate.setDni(dni);
         graduate.setGenre(Genre.valueFromFields(graduateData.get(GENRE)));
         graduate.setContactType(ContactType.valueFromTranslation(graduateData.get(CONTACT_TYPE)));
-        graduate.setEspecialty(graduateData.get(SPECIALTY));
+        graduate.setSpecialty(graduateData.get(SPECIALTY));
         return graduate;
     }
 
