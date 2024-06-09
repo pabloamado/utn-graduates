@@ -3,18 +3,21 @@ package com.utn.graduates.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.utn.graduates.constants.ContactType;
 import com.utn.graduates.constants.Genre;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GraduateDTO implements Serializable {
     private Long id;
+    @NotNull
     private String fullname;
+    @NotNull
     private String dni;
     private boolean present;
+    @NotNull
     private Genre genre;
+    @NotNull
     private ContactType contactType;
 
     public GraduateDTO() {
@@ -70,7 +73,13 @@ public class GraduateDTO implements Serializable {
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
+        return "GraduateDTO{" +
+                "id=" + id +
+                ", fullname='" + fullname + '\'' +
+                ", present=" + present +
+                ", genre=" + genre +
+                ", contactType=" + contactType +
+                '}';
     }
 
 }

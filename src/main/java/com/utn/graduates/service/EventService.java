@@ -18,7 +18,13 @@ public class EventService {
         return eventRepository.save(event);
     }
 
-    public List<Event> getAllEvents() {
+    public Event getEvent(long id) {
+        return eventRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Event with id : %s  not found", id)));
+
+    }
+
+    public List<Event> getEvents() {
         return eventRepository.findAll();
     }
 }
