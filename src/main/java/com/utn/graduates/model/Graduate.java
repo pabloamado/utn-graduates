@@ -1,6 +1,10 @@
 package com.utn.graduates.model;
 
+import com.utn.graduates.constants.ContactType;
+import com.utn.graduates.constants.Genre;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -9,10 +13,12 @@ import jakarta.persistence.Table;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.Objects;
 
-@Table (name = "graduate", indexes = {
+
+@Table(name = "graduate", indexes = {
         @Index(name = "idx_fullname", columnList = "fullname"),
-        @Index(name = "idx_dni", columnList = "dni")
+        @Index(name = "idx_dni", columnList = "dni", unique = true)
 })
 @Entity
 public class Graduate {
@@ -21,8 +27,11 @@ public class Graduate {
     private Long id;
     private String fullname;
     private String dni;
-    private String description;
-    private boolean known;
+    @Enumerated(EnumType.STRING)
+    private Genre genre;
+    private boolean present;
+    @Enumerated(EnumType.STRING)
+    private ContactType contactType;
 
     public Long getId() {
         return id;
@@ -48,25 +57,49 @@ public class Graduate {
         this.dni = dni;
     }
 
-    public String getDescription() {
-        return description;
+    public Genre getGenre() {
+        return genre;
     }
 
-    public void setDescription(final String description) {
-        this.description = description;
+    public void setGenre(final Genre genre) {
+        this.genre = genre;
     }
 
-    public boolean isKnown() {
-        return known;
+    public boolean isPresent() {
+        return present;
     }
 
-    public void setKnown(final boolean known) {
-        this.known = known;
+    public void setPresent(final boolean present) {
+        this.present = present;
+    }
+
+    public ContactType getContactType() {
+        return contactType;
+    }
+
+    public void setContactType(final ContactType contactType) {
+        this.contactType = contactType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Graduate graduate = (Graduate) o;
+        return Objects.equals(dni, graduate.dni);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(dni);
     }
 
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
     }
-
 }

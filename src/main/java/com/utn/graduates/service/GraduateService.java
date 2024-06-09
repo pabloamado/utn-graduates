@@ -50,8 +50,7 @@ public class GraduateService {
     }
 
     private GraduateDTO update(Graduate graduate, GraduateDTO graduateDTO) {
-        graduate.setDescription(graduateDTO.getDescription());
-        graduate.setKnown(graduateDTO.isKnown());
+        graduate.setPresent(graduateDTO.isPresent());
         Graduate save = graduateRepository.save(graduate);
         return this.objectMapper.convertValue(save, GraduateDTO.class);
     }

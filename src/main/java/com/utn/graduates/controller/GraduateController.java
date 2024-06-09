@@ -36,5 +36,4 @@ public class GraduateController {
     public GraduateDTO updateGraduate(@PathVariable("id") Long id, GraduateDTO graduateDTO) {
         return this.graduateService.updateGraduate(id, graduateDTO);
     }
-
 }

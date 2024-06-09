@@ -1,6 +1,8 @@
 package com.utn.graduates.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.utn.graduates.constants.ContactType;
+import com.utn.graduates.constants.Genre;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -11,8 +13,9 @@ public class GraduateDTO implements Serializable {
     private Long id;
     private String fullname;
     private String dni;
-    private String description;
-    private boolean known;
+    private boolean present;
+    private Genre genre;
+    private ContactType contactType;
 
     public GraduateDTO() {
     }
@@ -41,20 +44,28 @@ public class GraduateDTO implements Serializable {
         this.dni = dni;
     }
 
-    public String getDescription() {
-        return description;
+    public boolean isPresent() {
+        return present;
     }
 
-    public void setDescription(final String description) {
-        this.description = description;
+    public void setPresent(final boolean present) {
+        this.present = present;
     }
 
-    public boolean isKnown() {
-        return known;
+    public Genre getGenre() {
+        return genre;
     }
 
-    public void setKnown(final boolean known) {
-        this.known = known;
+    public void setGenre(final Genre genre) {
+        this.genre = genre;
+    }
+
+    public ContactType getContactType() {
+        return contactType;
+    }
+
+    public void setContactType(final ContactType contactType) {
+        this.contactType = contactType;
     }
 
     @Override
