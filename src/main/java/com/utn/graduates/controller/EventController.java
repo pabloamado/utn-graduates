@@ -1,5 +1,6 @@
 package com.utn.graduates.controller;
 
+import com.utn.graduates.dto.EventDTO;
 import com.utn.graduates.model.Event;
 import com.utn.graduates.service.EventService;
 import org.springframework.http.HttpStatus;
@@ -23,23 +24,20 @@ public class EventController {
     }
 
     @PostMapping
-    public Event createEvent(@RequestBody Event event) {
-        return eventService.createEvent(event);
+    public EventDTO createEvent(@RequestBody EventDTO eventDTO) {
+        return eventService.createEvent(eventDTO);
+    }
+
+    @GetMapping("/{id}")
+    public EventDTO getEvent(@PathVariable Long id) {
+        EventDTO eventDTO = eventService.getEvent(id);
+        return eventDTO;
     }
 
     @GetMapping
-    public List<Event> getEvents() {
+    public List<EventDTO> getEvents() {
         return eventService.getEvents();
     }
 
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Event> getEvent(@PathVariable Long id) {
-        Event event = eventService.getEvent(id);
-        if (event == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        return ResponseEntity.ok(event);
-    }
 
 }

@@ -1,11 +1,13 @@
 package com.utn.graduates.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalTime;
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TimeSlotDTO {
 
     public TimeSlotDTO() {

@@ -1,18 +1,22 @@
 package com.utn.graduates.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class EventDTO {
 
     public EventDTO() {
     }
 
     private Long id;
+
+    private String name;
 
     @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -34,6 +38,14 @@ public class EventDTO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
     }
 
     public LocalDate getDate() {

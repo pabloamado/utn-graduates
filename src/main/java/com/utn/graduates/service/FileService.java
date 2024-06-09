@@ -3,12 +3,11 @@ package com.utn.graduates.service;
 import com.google.common.base.Preconditions;
 import com.utn.graduates.constants.ContactType;
 import com.utn.graduates.constants.Genre;
-import com.utn.graduates.error.CustomResponse;
+import com.utn.graduates.exception.FileException;
 import com.utn.graduates.model.Graduate;
 import com.utn.graduates.repository.GraduateRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -44,7 +43,7 @@ public class FileService {
     }
 
     @Transactional
-    public CustomResponse importGraduatesFromCsv(final MultipartFile file) {
+    public int importGraduatesFromCsv(final MultipartFile file) {
         Set<Graduate> graduates = new HashSet<>();
         Set<String> existingDni = graduateRepository.findAllDni();
         Set<String> csvDni = new HashSet<>();
@@ -66,7 +65,7 @@ public class FileService {
                 }
                 String dni = graduateData.get(DNI);
                 Preconditions.checkState(!csvDni.contains(dni), "The register is duplicated in the file, please check the csv file at line: " + lineNumber);
-                Preconditions.checkState(!existingDni.contains(dni),String.format("The register in line %s already exists", lineNumber));
+                Preconditions.checkState(!existingDni.contains(dni), String.format("The register in line %s already exists", lineNumber));
                 Graduate graduate = this.createGraduate(graduateData, dni);
                 graduates.add(graduate);
                 csvDni.add(dni);
@@ -76,10 +75,10 @@ public class FileService {
             graduateRepository.saveAll(graduates);
 
         } catch (Exception e) {
-            return new CustomResponse(HttpStatus.BAD_REQUEST, String.format("Failed to import CSV file. Error: %s", e));
+            throw new FileException(String.format("Failed to import CSV file. Error: %s", e));
         }
 
-        return new CustomResponse(HttpStatus.OK, String.format("Registers saved %s", graduates.size()));
+        return graduates.size();
     }
 
     private Graduate createGraduate(final Map<String, String> graduateData, final String dni) {

@@ -23,12 +23,12 @@ public class GraduateService {
         this.graduateRepository = graduateRepository;
     }
 
-    public List<GraduateDTO> getAll() {
+    public List<GraduateDTO> getGraduates() {
         List<Graduate> graduates = this.graduateRepository.findAll();
-        return this.toGraduateDTO(graduates);
+        return this.convertToDTO(graduates);
     }
 
-    public Page<GraduateDTO> getAll(int page, int size) {
+    public Page<GraduateDTO> getGraduatesPage(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Graduate> graduatePage = graduateRepository.findAll(pageable);
         Page<GraduateDTO> graduateDTOPage = graduatePage.map(graduate -> objectMapper.convertValue(graduate, GraduateDTO.class));
@@ -55,7 +55,11 @@ public class GraduateService {
         return this.objectMapper.convertValue(save, GraduateDTO.class);
     }
 
-    private List<GraduateDTO> toGraduateDTO(List<Graduate> graduates) {
+    private List<GraduateDTO> convertToDTO(List<Graduate> graduates) {
         return graduates.stream().map(g -> objectMapper.convertValue(g, GraduateDTO.class)).collect(Collectors.toList());
+    }
+
+    public List<Graduate> findAllById(final List<Long> graduateIds) {
+        return this.graduateRepository.findAllById(graduateIds);
     }
 }

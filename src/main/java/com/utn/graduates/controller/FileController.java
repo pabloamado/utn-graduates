@@ -1,9 +1,9 @@
 package com.utn.graduates.controller;
 
-import com.utn.graduates.error.CustomResponse;
 import com.utn.graduates.service.FileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,9 +23,8 @@ public class FileController {
     }
 
     @PostMapping
-    public ResponseEntity<CustomResponse> importGraduatesFromCsv(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> importGraduatesFromCsv(@RequestParam("file") MultipartFile file) {
         LOGGER.info("Trying to import graduates from csv file: {}", file.getName());
-        CustomResponse customResponse =  fileService.importGraduatesFromCsv(file);
-        return new ResponseEntity<>(customResponse, customResponse.getCode());
+        return new ResponseEntity<>(String.format("Registers saved %s", fileService.importGraduatesFromCsv(file)), HttpStatus.OK);
     }
 }

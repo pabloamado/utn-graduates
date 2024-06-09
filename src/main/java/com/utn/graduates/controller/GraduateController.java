@@ -28,7 +28,7 @@ public class GraduateController {
         if (!Strings.isEmpty(param)) {
             return graduateService.getByParam(param, page, size);
         } else {
-            return graduateService.getAll(page, size);
+            return graduateService.getGraduatesPage(page, size);
         }
     }
 
