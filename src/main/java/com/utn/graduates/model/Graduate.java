@@ -32,6 +32,7 @@ public class Graduate {
     private boolean present;
     @Enumerated(EnumType.STRING)
     private ContactType contactType;
+    private String especialty;
 
     public Long getId() {
         return id;
@@ -79,6 +80,14 @@ public class Graduate {
 
     public void setContactType(final ContactType contactType) {
         this.contactType = contactType;
+    }
+
+    public String getEspecialty() {
+        return especialty;
+    }
+
+    public void setEspecialty(final String especialty) {
+        this.especialty = especialty;
     }
 
     @Override
