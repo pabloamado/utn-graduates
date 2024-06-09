@@ -1,14 +1,17 @@
 package com.utn.graduates.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.time.LocalTime;
 import java.util.List;
 
@@ -27,13 +30,8 @@ public class TimeSlot {
     @JoinColumn(name = "event_id")
     private Event event;
 
-    @ManyToMany
-    @JoinTable(
-            name = "timeslot_graduate",
-            joinColumns = @JoinColumn(name = "timeslot_id"),
-            inverseJoinColumns = @JoinColumn(name = "graduate_id")
-    )
-    private List<Graduate> graduates;
+    @OneToMany(mappedBy = "timeSlot", cascade = CascadeType.ALL)
+    private List<Attendance> attendances;
 
     public Long getId() {
         return id;
@@ -67,11 +65,16 @@ public class TimeSlot {
         this.event = event;
     }
 
-    public List<Graduate> getGraduates() {
-        return graduates;
+    public List<Attendance> getAttendances() {
+        return attendances;
     }
 
-    public void setGraduates(final List<Graduate> graduates) {
-        this.graduates = graduates;
+    public void setAttendances(final List<Attendance> attendances) {
+        this.attendances = attendances;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
     }
 }

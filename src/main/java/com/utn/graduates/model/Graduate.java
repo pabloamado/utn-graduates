@@ -29,10 +29,9 @@ public class Graduate {
     private String dni;
     @Enumerated(EnumType.STRING)
     private Genre genre;
-    private boolean present;
     @Enumerated(EnumType.STRING)
     private ContactType contactType;
-    private String especialty;
+    private String specialty;
 
     public Long getId() {
         return id;
@@ -66,14 +65,6 @@ public class Graduate {
         this.genre = genre;
     }
 
-    public boolean isPresent() {
-        return present;
-    }
-
-    public void setPresent(final boolean present) {
-        this.present = present;
-    }
-
     public ContactType getContactType() {
         return contactType;
     }
@@ -82,12 +73,12 @@ public class Graduate {
         this.contactType = contactType;
     }
 
-    public String getEspecialty() {
-        return especialty;
+    public String getSpecialty() {
+        return specialty;
     }
 
-    public void setEspecialty(final String especialty) {
-        this.especialty = especialty;
+    public void setSpecialty(final String specialty) {
+        this.specialty = specialty;
     }
 
     @Override

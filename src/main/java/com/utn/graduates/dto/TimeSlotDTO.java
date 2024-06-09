@@ -2,9 +2,11 @@ package com.utn.graduates.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.utn.graduates.model.Attendance;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -21,7 +23,7 @@ public class TimeSlotDTO {
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime endTime;
 
-    private List<Long> graduateIds;
+    private List<AttendanceDTO> attendancesDTO = new ArrayList<>();
 
     public LocalTime getStartTime() {
         return startTime;
@@ -39,12 +41,12 @@ public class TimeSlotDTO {
         this.endTime = endTime;
     }
 
-    public List<Long> getGraduateIds() {
-        return graduateIds;
+    public List<AttendanceDTO> getAttendancesDTO() {
+        return attendancesDTO;
     }
 
-    public void setGraduateIds(List<Long> graduateIds) {
-        this.graduateIds = graduateIds;
+    public void setAttendancesDTO(final List<AttendanceDTO> attendancesDTO) {
+        this.attendancesDTO = attendancesDTO;
     }
 
     @Override

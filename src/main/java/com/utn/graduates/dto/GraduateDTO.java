@@ -14,7 +14,6 @@ public class GraduateDTO implements Serializable {
     private String fullname;
     @NotNull
     private String dni;
-    private boolean present;
     @NotNull
     private Genre genre;
     @NotNull
@@ -47,14 +46,6 @@ public class GraduateDTO implements Serializable {
         this.dni = dni;
     }
 
-    public boolean isPresent() {
-        return present;
-    }
-
-    public void setPresent(final boolean present) {
-        this.present = present;
-    }
-
     public Genre getGenre() {
         return genre;
     }
@@ -76,7 +67,6 @@ public class GraduateDTO implements Serializable {
         return "GraduateDTO{" +
                 "id=" + id +
                 ", fullname='" + fullname + '\'' +
-                ", present=" + present +
                 ", genre=" + genre +
                 ", contactType=" + contactType +
                 '}';
