@@ -18,6 +18,8 @@ public class GraduateDTO implements Serializable {
     private Genre genre;
     @NotNull
     private ContactType contactType;
+    @NotNull
+    private String specialty;
 
     public GraduateDTO() {
     }
@@ -62,6 +64,14 @@ public class GraduateDTO implements Serializable {
         this.contactType = contactType;
     }
 
+    public @NotNull String getSpecialty() {
+        return specialty;
+    }
+
+    public void setSpecialty(final @NotNull String specialty) {
+        this.specialty = specialty;
+    }
+
     @Override
     public String toString() {
         return "GraduateDTO{" +
@@ -69,6 +79,7 @@ public class GraduateDTO implements Serializable {
                 ", fullname='" + fullname + '\'' +
                 ", genre=" + genre +
                 ", contactType=" + contactType +
+                ", specialty=" + specialty +
                 '}';
     }
 

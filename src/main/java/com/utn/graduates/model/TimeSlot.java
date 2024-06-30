@@ -20,18 +20,26 @@ public class TimeSlot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @JsonFormat(pattern = "HH:mm:ss")
+    private String name;
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime startTime;
-    @JsonFormat(pattern = "HH:mm:ss")
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime endTime;
 
     @ManyToOne
     @JoinColumn(name = "event_id")
     private Event event;
 
-    @OneToMany(mappedBy = "timeSlot", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "timeSlot", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Attendance> attendances;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
 
     public Long getId() {
         return id;

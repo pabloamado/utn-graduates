@@ -5,8 +5,6 @@ import com.utn.graduates.service.GraduateService;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +19,13 @@ public class GraduateController {
         this.graduateService = graduateService;
     }
 
+    /**
+     * search a graduateDTO by fullname or dni
+     * @param param
+     * @param page
+     * @param size
+     * @return
+     */
     @GetMapping("/search")
     public Page<GraduateDTO> searchByParam(@RequestParam(required = false) String param,
                                            @RequestParam (defaultValue = "0") int page,
@@ -30,10 +35,5 @@ public class GraduateController {
         } else {
             return graduateService.getGraduatesPage(page, size);
         }
-    }
-
-    @PutMapping("/{id}")
-    public GraduateDTO updateGraduate(@PathVariable("id") Long id, GraduateDTO graduateDTO) {
-        return this.graduateService.updateGraduate(id, graduateDTO);
     }
 }

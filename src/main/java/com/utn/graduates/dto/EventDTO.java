@@ -4,16 +4,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EventDTO {
-
-    public EventDTO() {
-    }
-
+public class EventDTO implements Serializable {
     private Long id;
 
     private String name;
@@ -23,14 +20,17 @@ public class EventDTO {
     private LocalDate date;
 
     @NotNull
-    @JsonFormat(pattern = "HH:mm:ss")
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime startTime;
 
     @NotNull
-    @JsonFormat(pattern = "HH:mm:ss")
+    @JsonFormat(pattern = "HH:mm")
     private LocalTime endTime;
 
     private List<TimeSlotDTO> timeSlots;
+
+    public EventDTO() {
+    }
 
     public Long getId() {
         return id;

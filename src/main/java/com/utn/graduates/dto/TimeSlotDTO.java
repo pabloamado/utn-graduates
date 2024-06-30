@@ -2,28 +2,48 @@ package com.utn.graduates.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.utn.graduates.model.Attendance;
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serializable;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TimeSlotDTO {
+public class TimeSlotDTO implements Serializable {
+    private Long id;
+
+    @NotNull
+    private String name;
+
+    @NotNull
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime startTime;
+
+    @NotNull
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime endTime;
+
+    private List<AttendanceDTO> attendances = new ArrayList<>();
 
     public TimeSlotDTO() {
     }
 
-    @NotNull
-    @JsonFormat(pattern = "HH:mm:ss")
-    private LocalTime startTime;
+    public Long getId() {
+        return id;
+    }
 
-    @NotNull
-    @JsonFormat(pattern = "HH:mm:ss")
-    private LocalTime endTime;
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-    private List<AttendanceDTO> attendancesDTO = new ArrayList<>();
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public LocalTime getStartTime() {
         return startTime;
@@ -41,12 +61,12 @@ public class TimeSlotDTO {
         this.endTime = endTime;
     }
 
-    public List<AttendanceDTO> getAttendancesDTO() {
-        return attendancesDTO;
+    public List<AttendanceDTO> getAttendances() {
+        return attendances;
     }
 
-    public void setAttendancesDTO(final List<AttendanceDTO> attendancesDTO) {
-        this.attendancesDTO = attendancesDTO;
+    public void setAttendances(final List<AttendanceDTO> attendances) {
+        this.attendances = attendances;
     }
 
     @Override

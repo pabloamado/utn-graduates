@@ -1,9 +1,17 @@
 package com.utn.graduates.dto;
 
-public class AttendanceDTO {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import java.io.Serializable;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class AttendanceDTO implements Serializable {
     private Long id;
     private Long graduateId;
     private Long timeSlotId;
+    private String fullname;
+    private String dni;
+    private String specialty;
     private boolean present;
 
     public AttendanceDTO() {
@@ -31,6 +39,30 @@ public class AttendanceDTO {
 
     public void setTimeSlotId(final Long timeSlotId) {
         this.timeSlotId = timeSlotId;
+    }
+
+    public String getFullname() {
+        return fullname;
+    }
+
+    public void setFullname(final String fullname) {
+        this.fullname = fullname;
+    }
+
+    public String getDni() {
+        return dni;
+    }
+
+    public void setDni(final String dni) {
+        this.dni = dni;
+    }
+
+    public String getSpecialty() {
+        return specialty;
+    }
+
+    public void setSpecialty(final String specialty) {
+        this.specialty = specialty;
     }
 
     public boolean isPresent() {
