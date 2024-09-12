@@ -9,11 +9,9 @@ import com.utn.graduates.repository.EventRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,7 +44,8 @@ public class EventService {
      */
     @Transactional
     public TimeSlotDTO saveTimeSlot(final Long eventId, final TimeSlotDTO timeSlotDTO) {
-        Event event = this.eventRepository.findById(eventId).orElseThrow(() -> new EventException(String.format("Event with id : %s not found", eventId)));
+        Event event = this.eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventException(String.format("Event with id : %s not found", eventId)));
         TimeSlot timeSlot = this.timeSlotService.save(event, timeSlotDTO);
         event.getTimeSlots().add(timeSlot);
         return this.timeSlotService.convertToDTO(timeSlot);
@@ -113,7 +112,9 @@ public class EventService {
         eventDTO.setDate(event.getDate());
         eventDTO.setStartTime(event.getStartTime());
         eventDTO.setEndTime(event.getEndTime());
-        eventDTO.setTimeSlots(event.getTimeSlots().stream().map(timeSlotService::convertToDTO).collect(Collectors.toList()));
+        if (event.getTimeSlots() != null) {
+            eventDTO.setTimeSlots(event.getTimeSlots().stream().map(timeSlotService::convertToDTO).collect(Collectors.toList()));
+        }
         return eventDTO;
     }
 }

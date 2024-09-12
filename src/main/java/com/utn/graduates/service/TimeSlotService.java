@@ -8,10 +8,10 @@ import com.utn.graduates.model.Event;
 import com.utn.graduates.model.TimeSlot;
 import com.utn.graduates.repository.TimeSlotRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -47,9 +47,8 @@ public class TimeSlotService {
     public TimeSlotDTO updateTimeSlot(final TimeSlotDTO timeSlotDTO) {
         TimeSlot timeSlot = timeSlotRepository.findById(timeSlotDTO.getId())
                 .orElseThrow(() -> new TimeSlotException(String.format("timeslot with id : %s  not found", timeSlotDTO.getId())));
-        if (timeSlot.getStartTime().isAfter(timeSlot.getEndTime())) {
-            throw new TimeSlotException(String.format("start time is after end time startTime: %s, endTime: %s", timeSlot.getStartTime(), timeSlot.getEndTime()));
-        }
+        this.validTimeWindows(timeSlot);
+
         timeSlot.setStartTime(timeSlotDTO.getStartTime());
         timeSlot.setEndTime(timeSlotDTO.getEndTime());
         List<AttendanceDTO> attendanceDTOs = timeSlotDTO.getAttendances();
@@ -63,6 +62,20 @@ public class TimeSlotService {
         }
 
         return convertToDTO(timeSlotRepository.save(timeSlot));
+    }
+
+    private static void validTimeWindows(final TimeSlot timeSlot) {
+        if (timeSlot.getStartTime().isAfter(timeSlot.getEndTime())) {
+            throw new TimeSlotException(String.format("timeslot start time can´t be after end time startTime: %s, endTime: %s", timeSlot.getStartTime(), timeSlot.getEndTime()));
+        }
+        if (timeSlot.getStartTime().isBefore(timeSlot.getEvent().getStartTime())) {
+            throw new TimeSlotException(String.format("timeslot start time can't be before the start time of the event. Event startTime: %s, TimeSlot startTime: %s",
+                    timeSlot.getEvent().getStartTime(), timeSlot.getStartTime()));
+        }
+        if (timeSlot.getEndTime().isAfter(timeSlot.getEvent().getEndTime())) {
+            throw new TimeSlotException(String.format("timeslot end time can't be after end time of the event endTime. Event endTime: %s, TimeSlot endTime: %s",
+                    timeSlot.getEvent().getStartTime(), timeSlot.getStartTime()));
+        }
     }
 
     public TimeSlot getTimeSlotById(final Long id) {

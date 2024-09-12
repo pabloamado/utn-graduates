@@ -3,7 +3,7 @@ package com.utn.graduates.constants;
 public enum ContactType {
     OTHER("otro"),
     EXTENSION("extension"),
-    RESEARCH("investigacion"),
+    RESEARCH("investigador"),
     ADVISER("consejero"),
     REFERRED("referido"),
     CLUB("club"),
