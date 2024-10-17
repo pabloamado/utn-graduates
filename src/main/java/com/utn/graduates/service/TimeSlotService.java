@@ -10,8 +10,8 @@ import com.utn.graduates.repository.TimeSlotRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,6 +35,12 @@ public class TimeSlotService {
     @Transactional
     public TimeSlot save(Event event, TimeSlotDTO timeSlotDTO) {
         TimeSlot timeSlot = this.convertToEntity(timeSlotDTO);
+        this.validTimeSlot(timeSlot, event);
+        List<TimeSlot> timeSlots = timeSlotRepository.findByEventId(event.getId());
+        boolean existed = timeSlots.stream().anyMatch(t -> t.getName().equalsIgnoreCase(timeSlot.getName()));
+        if(existed){
+            throw new TimeSlotException("TimeSlot with name " + timeSlot.getName() + " already exists");
+        }
         timeSlot.setEvent(event);
         return this.timeSlotRepository.save(timeSlot);
     }
@@ -47,8 +53,7 @@ public class TimeSlotService {
     public TimeSlotDTO updateTimeSlot(final TimeSlotDTO timeSlotDTO) {
         TimeSlot timeSlot = timeSlotRepository.findById(timeSlotDTO.getId())
                 .orElseThrow(() -> new TimeSlotException(String.format("timeslot with id : %s  not found", timeSlotDTO.getId())));
-        this.validTimeWindows(timeSlot);
-
+        this.validTimeSlot(timeSlot, timeSlot.getEvent());
         timeSlot.setStartTime(timeSlotDTO.getStartTime());
         timeSlot.setEndTime(timeSlotDTO.getEndTime());
         List<AttendanceDTO> attendanceDTOs = timeSlotDTO.getAttendances();
@@ -64,15 +69,22 @@ public class TimeSlotService {
         return convertToDTO(timeSlotRepository.save(timeSlot));
     }
 
-    private static void validTimeWindows(final TimeSlot timeSlot) {
+    private static void validTimeSlot(final TimeSlot timeSlot, Event event) {
+
+        if(timeSlot.getEndTime() == null || timeSlot.getStartTime() == null){
+            throw new TimeSlotException("timeSlot need to have endTime and startTime.");
+        }
+        if(!StringUtils.hasText(timeSlot.getName())){
+            throw new TimeSlotException("timeSlot need a name.");
+        }
         if (timeSlot.getStartTime().isAfter(timeSlot.getEndTime())) {
             throw new TimeSlotException(String.format("timeslot start time can´t be after end time startTime: %s, endTime: %s", timeSlot.getStartTime(), timeSlot.getEndTime()));
         }
-        if (timeSlot.getStartTime().isBefore(timeSlot.getEvent().getStartTime())) {
+        if (timeSlot.getStartTime().isBefore(event.getStartTime())) {
             throw new TimeSlotException(String.format("timeslot start time can't be before the start time of the event. Event startTime: %s, TimeSlot startTime: %s",
                     timeSlot.getEvent().getStartTime(), timeSlot.getStartTime()));
         }
-        if (timeSlot.getEndTime().isAfter(timeSlot.getEvent().getEndTime())) {
+        if (timeSlot.getStartTime().isAfter(event.getEndTime())) {
             throw new TimeSlotException(String.format("timeslot end time can't be after end time of the event endTime. Event endTime: %s, TimeSlot endTime: %s",
                     timeSlot.getEvent().getStartTime(), timeSlot.getStartTime()));
         }

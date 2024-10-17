@@ -3,15 +3,22 @@ package com.utn.graduates.service;
 import com.utn.graduates.dto.EventDTO;
 import com.utn.graduates.dto.TimeSlotDTO;
 import com.utn.graduates.exception.EventException;
+import com.utn.graduates.exception.TimeSlotException;
 import com.utn.graduates.model.Event;
 import com.utn.graduates.model.TimeSlot;
 import com.utn.graduates.repository.EventRepository;
+import org.mariadb.jdbc.plugin.codec.LocalDateCodec;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,8 +39,35 @@ public class EventService {
     @Transactional
     public EventDTO save(EventDTO eventDTO) {
         Event event = this.buildEvent(eventDTO);
+        this.validEvent(event);
+        List<Event> events = this.eventRepository.findAll();
+        Event founded = events.stream().filter(e -> e.getName().equalsIgnoreCase(event.getName())).findFirst().orElse(null);
+        if (founded != null) {
+            throw new EventException("Event with name " + event.getName() + " already exists");
+        }
         Event savedEvent = this.eventRepository.save(event);
         return this.convertToDTO(savedEvent);
+    }
+
+    private static void validEvent(Event event) {
+        if (event.getEndTime() == null || event.getStartTime() == null) {
+            throw new EventException("the event need to have endTime and startTime.");
+        }
+        if (!StringUtils.hasText(event.getName())) {
+            throw new EventException("the event need a name.");
+        }
+        if (event.getStartTime().isAfter(event.getEndTime())) {
+            throw new EventException(String.format("event start time can´t be after end time startTime: %s, endTime: %s", event.getStartTime(),
+                    event.getEndTime()));
+        }
+        if (event.getEndTime().isBefore(event.getStartTime())) {
+            throw new EventException(String.format("event start time can't be before start time. startTime: %s, TimeSlot startTime: %s",
+                    event.getStartTime(), event.getStartTime()));
+        }
+        LocalDate now = LocalDate.now();
+        if (event.getDate() == null || event.getDate().isBefore(now)) {
+            throw new EventException(String.format("event date can't be empty or be before today. date: %s today: %s", event.getDate(), now));
+        }
     }
 
     /**
@@ -91,12 +125,12 @@ public class EventService {
         event.setDate(eventDTO.getDate());
         event.setStartTime(eventDTO.getStartTime());
         event.setEndTime(eventDTO.getEndTime());
-        List<TimeSlot> timeSlots = this.timeSlotService.toTimeSlots(eventDTO.getTimeSlots());
+        /*List<TimeSlot> timeSlots = this.timeSlotService.toTimeSlots(eventDTO.getTimeSlots());
         if (timeSlots.isEmpty()) {
             throw new EventException("Cannot create an event without a timeslot");
         }
         timeSlots.forEach(ts -> ts.setEvent(event));
-        event.setTimeSlots(timeSlots);
+        event.setTimeSlots(timeSlots);*/
         return event;
     }
 
