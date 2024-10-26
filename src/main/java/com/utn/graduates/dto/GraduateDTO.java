@@ -1,7 +1,7 @@
 package com.utn.graduates.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.utn.graduates.constants.ContactType;
+import com.utn.graduates.model.ContactType;
 import com.utn.graduates.constants.Genre;
 
 import java.io.Serializable;

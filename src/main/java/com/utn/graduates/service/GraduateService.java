@@ -2,7 +2,7 @@ package com.utn.graduates.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
-import com.utn.graduates.constants.ContactType;
+import com.utn.graduates.model.ContactType;
 import com.utn.graduates.dto.GraduateDTO;
 import com.utn.graduates.exception.GraduateException;
 import com.utn.graduates.model.Graduate;

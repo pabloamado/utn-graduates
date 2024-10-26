@@ -1,6 +1,5 @@
 package com.utn.graduates.model;
 
-import com.utn.graduates.constants.ContactType;
 import com.utn.graduates.constants.Genre;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

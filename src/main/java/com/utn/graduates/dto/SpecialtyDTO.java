@@ -1,9 +1,10 @@
 package com.utn.graduates.dto;
 
-public class ContactTypeDTO {
+public class SpecialtyDTO {
     private String value;
 
-    public ContactTypeDTO() {
+    public SpecialtyDTO(final String value) {
+        this.value = value;
     }
 
     public String getValue() {

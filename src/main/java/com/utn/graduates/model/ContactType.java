@@ -1,4 +1,4 @@
-package com.utn.graduates.constants;
+package com.utn.graduates.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

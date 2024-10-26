@@ -1,7 +1,7 @@
 package com.utn.graduates.service;
 
 import com.google.common.base.Preconditions;
-import com.utn.graduates.constants.ContactType;
+import com.utn.graduates.model.ContactType;
 import com.utn.graduates.dto.ContactTypeDTO;
 import com.utn.graduates.exception.ContactTypeException;
 import com.utn.graduates.exception.GraduateException;
