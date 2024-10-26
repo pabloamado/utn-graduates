@@ -1,6 +1,7 @@
 package com.utn.graduates.controller.exception;
 
 import com.utn.graduates.exception.AttendanceException;
+import com.utn.graduates.exception.ContactTypeException;
 import com.utn.graduates.exception.CustomResponse;
 import com.utn.graduates.exception.EventException;
 import com.utn.graduates.exception.FileException;
@@ -39,6 +40,11 @@ public class GlobalExceptionController {
 
     @ExceptionHandler(AttendanceException.class)
     public ResponseEntity<CustomResponse> handleAttendanceException(AttendanceException ex) {
+        return createCustomResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(ContactTypeException.class)
+    public ResponseEntity<CustomResponse> handleContactTypeException(ContactTypeException ex) {
         return createCustomResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 

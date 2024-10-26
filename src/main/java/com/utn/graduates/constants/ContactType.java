@@ -1,30 +1,28 @@
 package com.utn.graduates.constants;
 
-public enum ContactType {
-    OTHER("otro"),
-    EXTENSION("extension"),
-    RESEARCH("investigador"),
-    ADVISER("consejero"),
-    REFERRED("referido"),
-    CLUB("club"),
-    NON_TEACHING("no docente");
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-    private String translation;
+@Table(name = "contact_type")
+@Entity
+public class ContactType {
+    @Id
+    private String value;
 
-    ContactType(String translation) {
-        this.translation = translation;
+    public ContactType() {
     }
 
-    public String getTranslation() {
-        return translation;
+    public ContactType(final String value) {
+        this.value = value;
     }
 
-    public static ContactType valueFromTranslation(String translation) {
-        for (ContactType contactType : ContactType.values()) {
-            if (contactType.getTranslation().equalsIgnoreCase(translation)) {
-                return contactType;
-            }
-        }
-        return null;
+    public String getValue() {
+        return value;
     }
+
+    public void setValue(final String value) {
+        this.value = value;
+    }
+
 }

@@ -3,11 +3,9 @@ package com.utn.graduates.service;
 import com.utn.graduates.dto.EventDTO;
 import com.utn.graduates.dto.TimeSlotDTO;
 import com.utn.graduates.exception.EventException;
-import com.utn.graduates.exception.TimeSlotException;
 import com.utn.graduates.model.Event;
 import com.utn.graduates.model.TimeSlot;
 import com.utn.graduates.repository.EventRepository;
-import org.mariadb.jdbc.plugin.codec.LocalDateCodec;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,9 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -125,12 +121,6 @@ public class EventService {
         event.setDate(eventDTO.getDate());
         event.setStartTime(eventDTO.getStartTime());
         event.setEndTime(eventDTO.getEndTime());
-        /*List<TimeSlot> timeSlots = this.timeSlotService.toTimeSlots(eventDTO.getTimeSlots());
-        if (timeSlots.isEmpty()) {
-            throw new EventException("Cannot create an event without a timeslot");
-        }
-        timeSlots.forEach(ts -> ts.setEvent(event));
-        event.setTimeSlots(timeSlots);*/
         return event;
     }
 
