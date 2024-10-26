@@ -1,10 +1,14 @@
 package com.utn.graduates.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Preconditions;
+import com.utn.graduates.constants.ContactType;
 import com.utn.graduates.dto.GraduateDTO;
 import com.utn.graduates.exception.GraduateException;
 import com.utn.graduates.model.Graduate;
 import com.utn.graduates.repository.GraduateRepository;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,11 +21,30 @@ import java.util.stream.Collectors;
 @Service
 public class GraduateService {
     private final GraduateRepository graduateRepository;
+    private final ContactTypeService contactTypeService;
+    private static final int DNI_LENGTH = 8;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public GraduateService(GraduateRepository graduateRepository) {
+    public GraduateService(GraduateRepository graduateRepository, ContactTypeService contactTypeService) {
         this.graduateRepository = graduateRepository;
+        this.contactTypeService = contactTypeService;
+    }
+
+    @Transactional
+    public GraduateDTO save(final GraduateDTO graduateDTO) {
+        try {
+            this.validateSaveGraduate(graduateDTO);
+            ContactType contactType = this.contactTypeService.findContactType(graduateDTO.getContactType().getValue());
+            Graduate graduate = objectMapper.convertValue(graduateDTO, Graduate.class);
+            graduate.setContactType(contactType);
+            Graduate saved = this.graduateRepository.save(graduate);
+            return objectMapper.convertValue(saved, GraduateDTO.class);
+        } catch (DataIntegrityViolationException e) {
+            throw new GraduateException("Graduate is repeated");
+        } catch (Exception e) {
+            throw new GraduateException("Graduate not saved " + e.getMessage());
+        }
     }
 
     public List<GraduateDTO> getGraduates() {
@@ -56,13 +79,33 @@ public class GraduateService {
 
     @Transactional
     public GraduateDTO updateGraduate(final Long graduateId, final GraduateDTO graduateDTO) {
-        Graduate graduate = this.graduateRepository.findById(graduateId)
-                .orElseThrow(() -> new GraduateException(String.format("Graduate with id: %s not found", graduateId)));
-        if (graduate.getDni().equals(graduateDTO.getDni()) && graduate.getFullname().equals(graduateDTO.getFullname())) {
-            graduate.setContactType(graduateDTO.getContactType());
+        try {
+            Graduate graduate = this.graduateRepository.findById(graduateId)
+                    .orElseThrow(() -> new GraduateException(String.format("Graduate with id: %s not found", graduateId)));
+            this.validateUpdateGraduate(graduateId, graduateDTO, graduate);
+            ContactType contactType = this.contactTypeService.findContactType(graduateDTO.getContactType().getValue());
+            graduate.setContactType(contactType);
             graduate.setSpecialty(graduateDTO.getSpecialty());
             return this.convertToDTO(this.graduateRepository.save(graduate));
+        } catch (Exception e) {
+            throw new GraduateException("Graduate with id: " + graduateId + " not updated " + e.getMessage());
         }
-        throw new GraduateException("Graduate with id: " + graduateId + " not updated");
     }
+
+    private void validateSaveGraduate(final GraduateDTO graduateDTO) {
+        Preconditions.checkNotNull(graduateDTO, "Graduate can't be null");
+        Preconditions.checkState(!StringUtils.isEmpty(graduateDTO.getDni()), "Dni can't be null or empty");
+        Preconditions.checkState(graduateDTO.getDni().length() == DNI_LENGTH, "Dni length must be 8, without dots");
+        Preconditions.checkState(!StringUtils.isEmpty(graduateDTO.getFullname()), "Fullname can't be null or empty");
+        Preconditions.checkNotNull(graduateDTO.getGenre(), "Genre must be 'femenino' o 'masculino'");
+        Preconditions.checkState(!StringUtils.isEmpty(graduateDTO.getSpecialty()), "Specialty can't be null or empty");
+    }
+
+    private void validateUpdateGraduate(final Long graduateId, final GraduateDTO graduateDTO, final Graduate graduate) {
+        Preconditions.checkNotNull(graduateDTO, "Graduate can't be null");
+        Preconditions.checkNotNull(graduateId, "GraduateId can't be null");
+        Preconditions.checkState(graduate.getDni().equals(graduateDTO.getDni()), "Dni must be the same");
+        Preconditions.checkState(graduate.getFullname().equals(graduateDTO.getFullname()), "Fullname must be the same");
+    }
+
 }

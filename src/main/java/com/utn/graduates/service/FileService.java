@@ -1,6 +1,7 @@
 package com.utn.graduates.service;
 
 import com.google.common.base.Preconditions;
+import com.utn.graduates.constants.ContactType;
 import com.utn.graduates.constants.Genre;
 import com.utn.graduates.exception.FileException;
 import com.utn.graduates.model.Graduate;
@@ -86,7 +87,7 @@ public class FileService {
         graduate.setFullname(graduateData.get(FULLNAME));
         graduate.setDni(dni);
         graduate.setGenre(Genre.valueFromFields(graduateData.get(GENRE)));
-        graduate.setContactType(graduateData.get(CONTACT_TYPE));
+        graduate.setContactType(new ContactType(graduateData.get(CONTACT_TYPE)));
         graduate.setSpecialty(graduateData.get(SPECIALTY));
         return graduate;
     }

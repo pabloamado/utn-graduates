@@ -1,5 +1,6 @@
 package com.utn.graduates.model;
 
+import com.utn.graduates.constants.ContactType;
 import com.utn.graduates.constants.Genre;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -8,6 +9,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -28,7 +31,11 @@ public class Graduate {
     private String dni;
     @Enumerated(EnumType.STRING)
     private Genre genre;
-    private String contactType;
+
+    @ManyToOne
+    @JoinColumn(name = "contact_type_value", referencedColumnName = "value")
+    private ContactType contactType;
+
     private String specialty;
 
     public Long getId() {
@@ -63,11 +70,11 @@ public class Graduate {
         this.genre = genre;
     }
 
-    public String getContactType() {
+    public ContactType getContactType() {
         return contactType;
     }
 
-    public void setContactType(final String contactType) {
+    public void setContactType(final ContactType contactType) {
         this.contactType = contactType;
     }
 

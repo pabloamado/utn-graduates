@@ -4,7 +4,9 @@ import com.google.common.base.Preconditions;
 import com.utn.graduates.constants.ContactType;
 import com.utn.graduates.dto.ContactTypeDTO;
 import com.utn.graduates.exception.ContactTypeException;
+import com.utn.graduates.exception.GraduateException;
 import com.utn.graduates.repository.ContactTypeRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -52,5 +54,11 @@ public class ContactTypeService {
         return Optional.ofNullable(this.contactTypeRepository.findAll())
                 .map(list -> list.stream().map(contactType -> contactType.getValue()).toList())
                 .orElse(new ArrayList<>());
+    }
+
+    public ContactType findContactType(String contactType) {
+        Preconditions.checkState(!StringUtils.isEmpty(contactType), "Contact type can't be null or empty");
+        return this.contactTypeRepository.findById(contactType)
+                .orElseThrow(() -> new ContactTypeException("ContactType doesn't exists, please create first the contactType"));
     }
 }

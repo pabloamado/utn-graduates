@@ -6,6 +6,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,11 @@ public class GraduateController {
         this.graduateService = graduateService;
     }
 
+
+    @PostMapping
+    public GraduateDTO createGraduate(@RequestBody GraduateDTO graduateDTO) {
+        return this.graduateService.save(graduateDTO);
+    }
     /**
      * search a graduateDTO by fullname or dni
      * @param param

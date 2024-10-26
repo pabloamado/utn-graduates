@@ -3,22 +3,21 @@ package com.utn.graduates.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.utn.graduates.constants.ContactType;
 import com.utn.graduates.constants.Genre;
-import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GraduateDTO implements Serializable {
     private Long id;
-    @NotNull
+
     private String fullname;
-    @NotNull
+
     private String dni;
-    @NotNull
+
     private Genre genre;
 
-    private String contactType;
-    @NotNull
+    private ContactType contactType;
+
     private String specialty;
 
     public GraduateDTO() {
@@ -56,19 +55,19 @@ public class GraduateDTO implements Serializable {
         this.genre = genre;
     }
 
-    public String getContactType() {
+    public ContactType getContactType() {
         return contactType;
     }
 
-    public void setContactType(final String contactType) {
+    public void setContactType(final ContactType contactType) {
         this.contactType = contactType;
     }
 
-    public @NotNull String getSpecialty() {
+    public String getSpecialty() {
         return specialty;
     }
 
-    public void setSpecialty(final @NotNull String specialty) {
+    public void setSpecialty(final String specialty) {
         this.specialty = specialty;
     }
 
