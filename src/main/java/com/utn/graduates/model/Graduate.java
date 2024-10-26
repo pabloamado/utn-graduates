@@ -2,6 +2,7 @@ package com.utn.graduates.model;
 
 import com.utn.graduates.constants.ContactType;
 import com.utn.graduates.constants.Genre;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -20,7 +21,9 @@ import java.util.Objects;
 
 @Table(name = "graduate", indexes = {
         @Index(name = "idx_fullname", columnList = "fullname"),
-        @Index(name = "idx_dni", columnList = "dni", unique = true)
+        @Index(name = "idx_dni", columnList = "dni", unique = true),
+        @Index(name = "idx_email", columnList = "email", unique = true),
+        @Index(name = "idx_phone", columnList = "phone", unique = true)
 })
 @Entity
 public class Graduate {
@@ -28,7 +31,12 @@ public class Graduate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String fullname;
+    @Column(unique = true)
     private String dni;
+    @Column(unique = true)
+    private String email;
+    @Column(unique = true)
+    private String phone;
     @Enumerated(EnumType.STRING)
     private Genre genre;
 
@@ -60,6 +68,22 @@ public class Graduate {
 
     public void setDni(final String dni) {
         this.dni = dni;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(final String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(final String phone) {
+        this.phone = phone;
     }
 
     public Genre getGenre() {

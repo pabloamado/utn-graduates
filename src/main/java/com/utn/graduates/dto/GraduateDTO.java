@@ -14,6 +14,10 @@ public class GraduateDTO implements Serializable {
 
     private String dni;
 
+    private String email;
+
+    private String phone;
+
     private Genre genre;
 
     private ContactType contactType;
@@ -45,6 +49,22 @@ public class GraduateDTO implements Serializable {
 
     public void setDni(final String dni) {
         this.dni = dni;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(final String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(final String phone) {
+        this.phone = phone;
     }
 
     public Genre getGenre() {

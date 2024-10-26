@@ -85,6 +85,9 @@ public class GraduateService {
             this.validateUpdateGraduate(graduateId, graduateDTO, graduate);
             ContactType contactType = this.contactTypeService.findContactType(graduateDTO.getContactType().getValue());
             graduate.setContactType(contactType);
+            graduate.setEmail(graduateDTO.getEmail());
+            graduate.setPhone(graduateDTO.getPhone());
+            graduate.setGenre(graduateDTO.getGenre());
             graduate.setSpecialty(graduateDTO.getSpecialty());
             return this.convertToDTO(this.graduateRepository.save(graduate));
         } catch (Exception e) {
@@ -94,16 +97,17 @@ public class GraduateService {
 
     private void validateSaveGraduate(final GraduateDTO graduateDTO) {
         Preconditions.checkNotNull(graduateDTO, "Graduate can't be null");
+        Preconditions.checkNotNull(graduateDTO.getGenre(), "Genre must be present");
         Preconditions.checkState(!StringUtils.isEmpty(graduateDTO.getDni()), "Dni can't be null or empty");
         Preconditions.checkState(graduateDTO.getDni().length() == DNI_LENGTH, "Dni length must be 8, without dots");
         Preconditions.checkState(!StringUtils.isEmpty(graduateDTO.getFullname()), "Fullname can't be null or empty");
-        Preconditions.checkNotNull(graduateDTO.getGenre(), "Genre must be 'femenino' o 'masculino'");
         Preconditions.checkState(!StringUtils.isEmpty(graduateDTO.getSpecialty()), "Specialty can't be null or empty");
     }
 
     private void validateUpdateGraduate(final Long graduateId, final GraduateDTO graduateDTO, final Graduate graduate) {
         Preconditions.checkNotNull(graduateDTO, "Graduate can't be null");
         Preconditions.checkNotNull(graduateId, "GraduateId can't be null");
+        Preconditions.checkNotNull(graduateDTO.getGenre(), "Genre must be present");
         Preconditions.checkState(graduate.getDni().equals(graduateDTO.getDni()), "Dni must be the same");
         Preconditions.checkState(graduate.getFullname().equals(graduateDTO.getFullname()), "Fullname must be the same");
     }

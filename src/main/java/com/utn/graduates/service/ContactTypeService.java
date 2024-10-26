@@ -7,6 +7,7 @@ import com.utn.graduates.exception.ContactTypeException;
 import com.utn.graduates.exception.GraduateException;
 import com.utn.graduates.repository.ContactTypeRepository;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -38,6 +39,8 @@ public class ContactTypeService {
         try {
             this.validateContactType(contactType);
             this.contactTypeRepository.deleteById(contactType);
+        } catch (DataIntegrityViolationException e) {
+            throw new GraduateException("Contact type is in use, can't be deleted");
         } catch (Exception e) {
             throw new ContactTypeException("Error deleting contact type " + e.getMessage());
         }
