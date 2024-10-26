@@ -23,11 +23,16 @@ public class GraduateController {
         this.graduateService = graduateService;
     }
 
-
+    /**
+     * create a graduateDTO
+     * @param graduateDTO
+     * @return
+     */
     @PostMapping
     public GraduateDTO createGraduate(@RequestBody GraduateDTO graduateDTO) {
         return this.graduateService.save(graduateDTO);
     }
+
     /**
      * search a graduateDTO by fullname or dni
      * @param param
@@ -37,8 +42,8 @@ public class GraduateController {
      */
     @GetMapping("/search")
     public Page<GraduateDTO> searchByParam(@RequestParam(required = false) String param,
-                                           @RequestParam (defaultValue = "0") int page,
-                                           @RequestParam (defaultValue = "10") int size) {
+                                           @RequestParam(defaultValue = "0") int page,
+                                           @RequestParam(defaultValue = "10") int size) {
         if (!Strings.isEmpty(param)) {
             return graduateService.getByParam(param, page, size);
         } else {
@@ -46,6 +51,10 @@ public class GraduateController {
         }
     }
 
+    /**
+     * update a graduateDTO
+     * @return
+     */
     @PutMapping("/{graduateId}")
     public GraduateDTO update(@PathVariable Long graduateId, @RequestBody GraduateDTO graduateDTO) {
         return this.graduateService.updateGraduate(graduateId, graduateDTO);
