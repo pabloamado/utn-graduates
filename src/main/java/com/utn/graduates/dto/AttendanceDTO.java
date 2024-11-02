@@ -1,6 +1,7 @@
 package com.utn.graduates.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.utn.graduates.model.Specialty;
 
 import java.io.Serializable;
 
@@ -11,7 +12,7 @@ public class AttendanceDTO implements Serializable {
     private Long timeSlotId;
     private String fullname;
     private String dni;
-    private String specialty;
+    private Specialty specialty;
     private boolean present;
 
     public AttendanceDTO() {
@@ -57,11 +58,11 @@ public class AttendanceDTO implements Serializable {
         this.dni = dni;
     }
 
-    public String getSpecialty() {
+    public Specialty getSpecialty() {
         return specialty;
     }
 
-    public void setSpecialty(final String specialty) {
+    public void setSpecialty(final Specialty specialty) {
         this.specialty = specialty;
     }
 

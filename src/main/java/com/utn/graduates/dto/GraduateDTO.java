@@ -3,6 +3,7 @@ package com.utn.graduates.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.utn.graduates.model.ContactType;
 import com.utn.graduates.constants.Genre;
+import com.utn.graduates.model.Specialty;
 
 import java.io.Serializable;
 
@@ -22,7 +23,7 @@ public class GraduateDTO implements Serializable {
 
     private ContactType contactType;
 
-    private String specialty;
+    private Specialty specialty;
 
     public GraduateDTO() {
     }
@@ -83,11 +84,11 @@ public class GraduateDTO implements Serializable {
         this.contactType = contactType;
     }
 
-    public String getSpecialty() {
+    public Specialty getSpecialty() {
         return specialty;
     }
 
-    public void setSpecialty(final String specialty) {
+    public void setSpecialty(final Specialty specialty) {
         this.specialty = specialty;
     }
 
