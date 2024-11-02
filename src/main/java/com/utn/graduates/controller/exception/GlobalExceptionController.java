@@ -6,6 +6,7 @@ import com.utn.graduates.exception.CustomResponse;
 import com.utn.graduates.exception.EventException;
 import com.utn.graduates.exception.FileException;
 import com.utn.graduates.exception.GraduateException;
+import com.utn.graduates.exception.SpecialtyException;
 import com.utn.graduates.exception.TimeSlotException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,6 @@ public class GlobalExceptionController {
     @ExceptionHandler(EventException.class)
     public ResponseEntity<CustomResponse> handleEventException(EventException ex) {
         return createCustomResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
-
     }
 
     @ExceptionHandler(TimeSlotException.class)
@@ -45,6 +45,11 @@ public class GlobalExceptionController {
 
     @ExceptionHandler(ContactTypeException.class)
     public ResponseEntity<CustomResponse> handleContactTypeException(ContactTypeException ex) {
+        return createCustomResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(SpecialtyException.class)
+    public ResponseEntity<CustomResponse> handleSpecialtyException(SpecialtyException ex) {
         return createCustomResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
