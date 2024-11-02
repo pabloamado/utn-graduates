@@ -6,6 +6,7 @@ import com.utn.graduates.model.ContactType;
 import com.utn.graduates.dto.GraduateDTO;
 import com.utn.graduates.exception.GraduateException;
 import com.utn.graduates.model.Graduate;
+import com.utn.graduates.model.Specialty;
 import com.utn.graduates.repository.GraduateRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,23 +23,27 @@ import java.util.stream.Collectors;
 public class GraduateService {
     private final GraduateRepository graduateRepository;
     private final ContactTypeService contactTypeService;
+    private final SpecialtyService specialtyService;
     private static final int DNI_LENGTH = 8;
     private static final String PHONE_REGEX = "\\d{8,11}";
     private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.com$";
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public GraduateService(GraduateRepository graduateRepository, ContactTypeService contactTypeService) {
+    public GraduateService(GraduateRepository graduateRepository, ContactTypeService contactTypeService, SpecialtyService specialtyService) {
         this.graduateRepository = graduateRepository;
         this.contactTypeService = contactTypeService;
+        this.specialtyService = specialtyService;
     }
 
     @Transactional
     public GraduateDTO save(final GraduateDTO graduateDTO) {
         try {
             this.validateSaveGraduate(graduateDTO);
-            ContactType contactType = this.contactTypeService.findContactType(graduateDTO.getContactType().getValue());
+            Specialty specialty = this.specialtyService.findSpecialty(graduateDTO.getSpecialty());
+            ContactType contactType = this.contactTypeService.findContactType(graduateDTO.getContactType());
             Graduate graduate = objectMapper.convertValue(graduateDTO, Graduate.class);
             graduate.setContactType(contactType);
+            graduate.setSpecialty(specialty);
             Graduate saved = this.graduateRepository.save(graduate);
             return this.convertToDTO(saved);
         } catch (DataIntegrityViolationException e) {
@@ -84,12 +89,13 @@ public class GraduateService {
             Graduate graduate = this.graduateRepository.findById(graduateId)
                     .orElseThrow(() -> new GraduateException(String.format("Graduate with id: %s not found", graduateId)));
             this.validateUpdateGraduate(graduateId, graduateDTO, graduate);
-            ContactType contactType = this.contactTypeService.findContactType(graduateDTO.getContactType().getValue());
+            ContactType contactType = this.contactTypeService.findContactType(graduateDTO.getContactType());
+            Specialty specialty = this.specialtyService.findSpecialty(graduateDTO.getSpecialty());
             graduate.setContactType(contactType);
             graduate.setEmail(graduateDTO.getEmail());
             graduate.setPhone(graduateDTO.getPhone());
             graduate.setGenre(graduateDTO.getGenre());
-            graduate.setSpecialty(graduateDTO.getSpecialty());
+            graduate.setSpecialty(specialty);
             return this.convertToDTO(this.graduateRepository.save(graduate));
         } catch (Exception e) {
             throw new GraduateException("Graduate with id: " + graduateId + " not updated " + e.getMessage());
@@ -106,7 +112,8 @@ public class GraduateService {
         Preconditions.checkState(!StringUtils.isEmpty(graduateDTO.getDni()), "Dni can't be null or empty");
         Preconditions.checkState(graduateDTO.getDni().length() == DNI_LENGTH, "Dni length must be 8, without dots");
         Preconditions.checkState(!StringUtils.isEmpty(graduateDTO.getFullname()), "Fullname can't be null or empty");
-        Preconditions.checkState(!StringUtils.isEmpty(graduateDTO.getSpecialty()), "Specialty can't be null or empty");
+        Preconditions.checkNotNull(graduateDTO.getSpecialty(), "Specialty can't be null");
+        Preconditions.checkState(!StringUtils.isEmpty(graduateDTO.getSpecialty().getName()), "Specialty can't be empty");
 
     }
 

@@ -5,6 +5,7 @@ import com.utn.graduates.model.ContactType;
 import com.utn.graduates.constants.Genre;
 import com.utn.graduates.exception.FileException;
 import com.utn.graduates.model.Graduate;
+import com.utn.graduates.model.Specialty;
 import com.utn.graduates.repository.GraduateRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,9 @@ public class FileService {
     private static final String GENRE = "genre";
     private static final String SPECIALTY = "specialty";
     private static final String CONTACT_TYPE = "contact_type";
-    private static final String[] requiredCsvColumns = {DNI, FULLNAME, GENRE, CONTACT_TYPE, SPECIALTY};
+    private static final String EMAIL = "email";
+    private static final String PHONE = "phone";
+    private static final String[] requiredCsvColumns = {DNI, FULLNAME, GENRE, CONTACT_TYPE, SPECIALTY, EMAIL, PHONE};
     private static final String SEMICOLON = ";";
     private static final String COMMA = ",";
 
@@ -86,9 +89,11 @@ public class FileService {
         Graduate graduate = new Graduate();
         graduate.setFullname(graduateData.get(FULLNAME));
         graduate.setDni(dni);
+        graduate.setPhone(graduateData.get(PHONE));
+        graduate.setEmail(graduateData.get(EMAIL));
         graduate.setGenre(Genre.valueFromFields(graduateData.get(GENRE)));
         graduate.setContactType(new ContactType(graduateData.get(CONTACT_TYPE)));
-        graduate.setSpecialty(graduateData.get(SPECIALTY));
+        graduate.setSpecialty(new Specialty(graduateData.get(SPECIALTY)));
         return graduate;
     }
 
