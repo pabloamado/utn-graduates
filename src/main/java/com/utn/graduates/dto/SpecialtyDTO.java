@@ -1,17 +1,17 @@
 package com.utn.graduates.dto;
 
 public class SpecialtyDTO {
-    private String value;
+    private String name;
 
-    public SpecialtyDTO(final String value) {
-        this.value = value;
+    public SpecialtyDTO(final String name) {
+        this.name = name;
     }
 
-    public String getValue() {
-        return value;
+    public String getName() {
+        return name;
     }
 
-    public void setValue(final String value) {
-        this.value = value;
+    public void setName(final String name) {
+        this.name = name;
     }
 }

@@ -26,13 +26,12 @@ public class ContactTypeService {
 
     public ContactTypeDTO createContactType(ContactTypeDTO contactTypeDTO) {
         try {
-            this.validateContactType(contactTypeDTO.getValue());
-            this.contactTypeRepository.save(new ContactType(contactTypeDTO.getValue()));
-
+            this.validateContactType(contactTypeDTO.getName());
+            ContactType saved = this.contactTypeRepository.save(new ContactType(contactTypeDTO.getName()));
+            return new ContactTypeDTO(saved.getName());
         } catch (Exception e) {
             throw new ContactTypeException("Error creating contact type " + e.getMessage());
         }
-        return contactTypeDTO;
     }
 
     public void deleteContactType(String contactType) {
@@ -42,7 +41,7 @@ public class ContactTypeService {
         } catch (DataIntegrityViolationException e) {
             throw new GraduateException("Contact type is in use, can't be deleted");
         } catch (Exception e) {
-            throw new ContactTypeException("Error deleting contact type " + e.getMessage());
+            throw new ContactTypeException("Error deleting contact type value" + e.getMessage());
         }
     }
 
@@ -55,13 +54,14 @@ public class ContactTypeService {
 
     public List<String> getContactTypes() {
         return Optional.ofNullable(this.contactTypeRepository.findAll())
-                .map(list -> list.stream().map(contactType -> contactType.getValue()).toList())
+                .map(list -> list.stream().map(contactType -> contactType.getName()).toList())
                 .orElse(new ArrayList<>());
     }
 
-    public ContactType findContactType(String contactType) {
-        Preconditions.checkState(!StringUtils.isEmpty(contactType), "Contact type can't be null or empty");
-        return this.contactTypeRepository.findById(contactType)
+    public ContactType findContactType(ContactType contactType) {
+        Preconditions.checkNotNull(contactType, "Contact type can't be null ");
+        Preconditions.checkState(!StringUtils.isEmpty(contactType.getName()), "Contact type can't be empty");
+        return this.contactTypeRepository.findById(contactType.getName())
                 .orElseThrow(() -> new ContactTypeException("ContactType doesn't exists, please create first the contactType"));
     }
 }
