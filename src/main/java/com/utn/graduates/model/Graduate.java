@@ -40,10 +40,12 @@ public class Graduate {
     private Genre genre;
 
     @ManyToOne
-    @JoinColumn(name = "contact_type_value", referencedColumnName = "value")
+    @JoinColumn(name = "contact_type_name", referencedColumnName = "name")
     private ContactType contactType;
 
-    private String specialty;
+    @ManyToOne
+    @JoinColumn(name = "specialty_name", referencedColumnName = "name")
+    private Specialty specialty;
 
     public Long getId() {
         return id;
@@ -101,11 +103,11 @@ public class Graduate {
         this.contactType = contactType;
     }
 
-    public String getSpecialty() {
+    public Specialty getSpecialty() {
         return specialty;
     }
 
-    public void setSpecialty(final String specialty) {
+    public void setSpecialty(final Specialty specialty) {
         this.specialty = specialty;
     }
 
