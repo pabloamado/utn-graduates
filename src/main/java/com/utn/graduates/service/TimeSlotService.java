@@ -90,13 +90,13 @@ public class TimeSlotService {
         }
     }
 
+    public void delete(final Long timeSlotId) {
+        this.timeSlotRepository.deleteById(timeSlotId);
+    }
+
     public TimeSlot getTimeSlotById(final Long id) {
         return this.timeSlotRepository.findById(id)
                 .orElseThrow(() -> new TimeSlotException(String.format("TimeSlot with id: %s not found")));
-    }
-
-    public void delete(final Long timeSlotId) {
-        this.timeSlotRepository.deleteById(timeSlotId);
     }
 
     public List<TimeSlot> toTimeSlots(final List<TimeSlotDTO> timeSlotsDTOs) {

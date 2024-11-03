@@ -1,8 +1,8 @@
 package com.utn.graduates.constants;
 
 public enum Genre {
-    MALE("M", "masculino"),
-    FEMALE("F", "femenino");
+    MALE("M", "Masculino"),
+    FEMALE("F", "Femenino");
 
     private String initial;
     private String translation;

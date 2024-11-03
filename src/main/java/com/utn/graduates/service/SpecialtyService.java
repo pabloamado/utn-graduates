@@ -19,7 +19,7 @@ import java.util.Optional;
 public class SpecialtyService {
 
     private final SpecialtyRepository specialtyRepository;
-    private static final String VALIDATION_REGEX = "^[a-zA-Z]+$";
+    private static final String VALIDATION_REGEX = "^[a-zA-Z]+(\\s[a-zA-Z]+)*$";
 
     public SpecialtyService(SpecialtyRepository specialtyRepository) {
         this.specialtyRepository = specialtyRepository;
