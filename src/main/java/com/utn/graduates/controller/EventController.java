@@ -48,8 +48,7 @@ public class EventController {
     }
 
     @DeleteMapping("/{eventId}")
-    public ResponseEntity deleteEvent(@PathVariable("eventId") Long eventId) {
+    public void deleteEvent(@PathVariable("eventId") Long eventId) {
         this.eventService.delete(eventId);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }

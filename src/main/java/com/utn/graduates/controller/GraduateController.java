@@ -4,6 +4,7 @@ import com.utn.graduates.dto.GraduateDTO;
 import com.utn.graduates.service.GraduateService;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,5 +59,10 @@ public class GraduateController {
     @PutMapping("/{graduateId}")
     public GraduateDTO update(@PathVariable Long graduateId, @RequestBody GraduateDTO graduateDTO) {
         return this.graduateService.updateGraduate(graduateId, graduateDTO);
+    }
+
+    @DeleteMapping("/{graduateId}")
+    public void delete(@PathVariable("graduateId") Long graduateId) {
+        this.graduateService.delete(graduateId);
     }
 }

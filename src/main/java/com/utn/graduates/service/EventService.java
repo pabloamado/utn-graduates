@@ -1,5 +1,6 @@
 package com.utn.graduates.service;
 
+import com.google.common.base.Preconditions;
 import com.utn.graduates.dto.EventDTO;
 import com.utn.graduates.dto.TimeSlotDTO;
 import com.utn.graduates.exception.EventException;
@@ -107,7 +108,12 @@ public class EventService {
      * @param eventId
      */
     public void delete(final Long eventId) {
-        this.eventRepository.deleteById(eventId);
+        try {
+            Preconditions.checkNotNull(eventId, "Event id can't be null");
+            this.eventRepository.deleteById(eventId);
+        } catch (Exception e) {
+            throw new EventException("Event with id: " + eventId + " not deleted " + e.getMessage());
+        }
     }
 
     /**

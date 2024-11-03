@@ -35,14 +35,18 @@ public class FileService {
     private static final String CONTACT_TYPE = "contact_type";
     private static final String EMAIL = "email";
     private static final String PHONE = "phone";
-    private static final String[] requiredCsvColumns = {DNI, FULLNAME, GENRE, CONTACT_TYPE, SPECIALTY, EMAIL, PHONE};
+    private static final String[] requiredCsvColumns = {DNI, FULLNAME, GENRE, CONTACT_TYPE, SPECIALTY, EMAIL};
     private static final String SEMICOLON = ";";
     private static final String COMMA = ",";
 
-    private GraduateRepository graduateRepository;
+    private final GraduateRepository graduateRepository;
+    private final SpecialtyService specialtyService;
+    private final ContactTypeService contactTypeService;
 
-    public FileService(GraduateRepository graduateRepository) {
+    public FileService(GraduateRepository graduateRepository, SpecialtyService specialtyService, ContactTypeService contactTypeService) {
         this.graduateRepository = graduateRepository;
+        this.specialtyService = specialtyService;
+        this.contactTypeService = contactTypeService;
     }
 
     @Transactional
@@ -50,6 +54,8 @@ public class FileService {
         Set<Graduate> graduates = new HashSet<>();
         Set<String> existingDni = graduateRepository.findAllDni();
         Set<String> csvDni = new HashSet<>();
+        List<String> specialties = this.specialtyService.getSpecialties();
+        List<String> contactTypes = this.contactTypeService.getContactTypes();
 
         int lineNumber = 1;
 
@@ -70,6 +76,9 @@ public class FileService {
                 Preconditions.checkState(!csvDni.contains(dni), "The register is duplicated in the file, please check the csv file at line: " + lineNumber);
                 Preconditions.checkState(!existingDni.contains(dni), String.format("The register in line %s already exists", lineNumber));
                 Graduate graduate = this.convertToEntity(graduateData, dni);
+                this.checkField(graduate.getSpecialty().getName(), specialties);
+                this.checkField(graduate.getContactType().getName(), contactTypes);
+
                 graduates.add(graduate);
                 csvDni.add(dni);
             }
@@ -83,6 +92,11 @@ public class FileService {
         }
 
         return graduates.size();
+    }
+
+    private void checkField(final String field, final List<String> list) {
+        Preconditions.checkState(!CollectionUtils.isEmpty(list), "The field " + field + " doesn´t exists, please create it first");
+        Preconditions.checkState(list.contains(field), "The field " + field + " doesn´t exists, please create it first");
     }
 
     private Graduate convertToEntity(final Map<String, String> graduateData, final String dni) {
