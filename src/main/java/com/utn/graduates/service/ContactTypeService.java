@@ -30,7 +30,7 @@ public class ContactTypeService {
             ContactType saved = this.contactTypeRepository.save(new ContactType(contactTypeDTO.getName()));
             return new ContactTypeDTO(saved.getName());
         } catch (Exception e) {
-            throw new ContactTypeException("Error creating contact type " + e.getMessage());
+            throw new ContactTypeException("Error al crear tipo de contacto " + e.getMessage());
         }
     }
 
@@ -39,16 +39,16 @@ public class ContactTypeService {
             this.validateContactType(contactType);
             this.contactTypeRepository.deleteById(contactType);
         } catch (DataIntegrityViolationException e) {
-            throw new GraduateException("Contact type is in use, can't be deleted");
+            throw new GraduateException("El tipo de contacto esta en uso, no puede ser borrado.");
         } catch (Exception e) {
-            throw new ContactTypeException("Error deleting contact type value" + e.getMessage());
+            throw new ContactTypeException("Error al borrar el tipo de contacto " + e.getMessage());
         }
     }
 
     private void validateContactType(String contactType) {
-        Preconditions.checkNotNull(contactType, "Contact type can't be null");
+        Preconditions.checkNotNull(contactType, "Tipo de contacto no puede ser nulo");
         if (!contactType.matches(VALIDATION_REGEX)) {
-            throw new ContactTypeException("Contact type must contain only uppercase letters and underscores.");
+            throw new ContactTypeException("El tipo de contacto debe contener solo letras en mayusculas y separado por guiones bajos.");
         }
     }
 
@@ -59,9 +59,9 @@ public class ContactTypeService {
     }
 
     public ContactType findContactType(ContactType contactType) {
-        Preconditions.checkNotNull(contactType, "Contact type can't be null ");
-        Preconditions.checkState(!StringUtils.isEmpty(contactType.getName()), "Contact type can't be empty");
+        Preconditions.checkNotNull(contactType, "El tipo de contacto no puede ser nulo");
+        Preconditions.checkState(!StringUtils.isEmpty(contactType.getName()), "El tipo de contacto no puede estar vacio.");
         return this.contactTypeRepository.findById(contactType.getName())
-                .orElseThrow(() -> new ContactTypeException("ContactType doesn't exists, please create first the contactType"));
+                .orElseThrow(() -> new ContactTypeException("El tipo de contacto no existe, debes crearlo primero."));
     }
 }

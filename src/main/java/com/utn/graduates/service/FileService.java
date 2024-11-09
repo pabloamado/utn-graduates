@@ -73,8 +73,8 @@ public class FileService {
                     graduateData.put(requiredCsvColumns[i], fields[i].trim());
                 }
                 String dni = graduateData.get(DNI);
-                Preconditions.checkState(!csvDni.contains(dni), "The register is duplicated in the file, please check the csv file at line: " + lineNumber);
-                Preconditions.checkState(!existingDni.contains(dni), String.format("The register in line %s already exists", lineNumber));
+                Preconditions.checkState(!csvDni.contains(dni), "El registro  a guardar esta duplicado en el archivo, revise el archivo en la linea: " + lineNumber);
+                Preconditions.checkState(!existingDni.contains(dni), String.format("El registro en la linea %s ya existe.", lineNumber));
                 Graduate graduate = this.convertToEntity(graduateData, dni);
                 this.checkField(graduate.getSpecialty().getName(), specialties);
                 this.checkField(graduate.getContactType().getName(), contactTypes);
@@ -83,12 +83,12 @@ public class FileService {
                 csvDni.add(dni);
             }
 
-            Preconditions.checkState(!CollectionUtils.isEmpty(graduates), "The registers to save are empty.");
+            Preconditions.checkState(!CollectionUtils.isEmpty(graduates), "Los registros a guardar estan vacios.");
             graduateRepository.saveAll(graduates);
-            LOGGER.info("saved successfully {} registers", graduates.size());
+            LOGGER.info("Guardados exitosamente {} registros.", graduates.size());
         } catch (Exception e) {
-            LOGGER.error("Failed to import graduates from csv file", e);
-            throw new FileException(String.format("Failed to import CSV file. Error: %s", e));
+            LOGGER.error("Hubo un error al importar los registros desde el archivo CSV.", e);
+            throw new FileException(String.format("Fallo al importar los registros desde el archivo CSV. Error: %s", e));
         }
 
         return graduates.size();
@@ -112,12 +112,12 @@ public class FileService {
     }
 
     private void validateCsvColumns(String line) {
-        Preconditions.checkState(StringUtils.hasText(line), "Missing columns in csv file");
-        Preconditions.checkState(!line.contains(COMMA), "Invalid csv format, the columns canot be separated by ',' " + line);
+        Preconditions.checkState(StringUtils.hasText(line), "Faltan columnas obligatorias en el archivo CSV.");
+        Preconditions.checkState(!line.contains(COMMA), "Formato de archivo CSV invalido, las columnas deben estar separadas por ';' linea: " + line);
         String[] columns = line.split(SEMICOLON);
         List<String> presentColumns = Arrays.asList(columns);
         for (String requiredColumn : requiredCsvColumns) {
-            Preconditions.checkState(presentColumns.contains(requiredColumn), "Missing required column: " + requiredColumn);
+            Preconditions.checkState(presentColumns.contains(requiredColumn), "Columna requerida faltante: " + requiredColumn);
         }
     }
 }

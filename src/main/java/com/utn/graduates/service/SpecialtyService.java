@@ -37,7 +37,7 @@ public class SpecialtyService {
             Specialty saved = this.specialtyRepository.save(new Specialty(specialtyDTO.getName()));
             return new SpecialtyDTO(saved.getName());
         } catch (Exception e) {
-            throw new SpecialtyException("Error creating specialty " + e.getMessage());
+            throw new SpecialtyException("Error al crear especialidad " + e.getMessage());
         }
     }
 
@@ -46,23 +46,23 @@ public class SpecialtyService {
             this.validateSpecialty(specialty);
             this.specialtyRepository.deleteById(specialty);
         } catch (DataIntegrityViolationException e) {
-            throw new GraduateException("Specialty is in use, can't be deleted");
+            throw new GraduateException("La especialidad esta en uso, no puede ser borrada");
         } catch (Exception e) {
-            throw new ContactTypeException("Error deleting Specialty value " + e.getMessage());
+            throw new ContactTypeException("Error al borrar especialidad " + e.getMessage());
         }
     }
 
     private void validateSpecialty(String specialty) {
-        Preconditions.checkNotNull(specialty, "Specialty can't be null");
+        Preconditions.checkNotNull(specialty, "La especialidad no puede ser nula");
         if (!specialty.matches(VALIDATION_REGEX)) {
-            throw new SpecialtyException("Specialty must contain only letters");
+            throw new SpecialtyException("La especialidad debe contener solo letras.");
         }
     }
 
     public Specialty findSpecialty(final Specialty specialty) {
-        Preconditions.checkNotNull(specialty, "Specialty can't be null");
-        Preconditions.checkState(!StringUtils.isEmpty(specialty.getName()), "Specialty can't be empty");
+        Preconditions.checkNotNull(specialty, "La especialidad no puede ser nula");
+        Preconditions.checkState(!StringUtils.isEmpty(specialty.getName()), "La especialidad no puede estar vacia");
         return this.specialtyRepository.findById(specialty.getName())
-                .orElseThrow(() -> new ContactTypeException("Specialty doesn't exists, please create first the Specialty"));
+                .orElseThrow(() -> new ContactTypeException("La especialidad no existe, debe crearla primero."));
     }
 }

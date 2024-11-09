@@ -35,11 +35,11 @@ public class TimeSlotService {
     @Transactional
     public TimeSlot save(Event event, TimeSlotDTO timeSlotDTO) {
         TimeSlot timeSlot = this.convertToEntity(timeSlotDTO);
-        this.validTimeSlot(timeSlot, event);
+        this.validTimeSlot(this.convertToDTO(timeSlot), event);
         List<TimeSlot> timeSlots = timeSlotRepository.findByEventId(event.getId());
         boolean existed = timeSlots.stream().anyMatch(t -> t.getName().equalsIgnoreCase(timeSlot.getName()));
-        if(existed){
-            throw new TimeSlotException("TimeSlot with name " + timeSlot.getName() + " already exists");
+        if (existed) {
+            throw new TimeSlotException("Seccion con nombre " + timeSlot.getName() + " ya existe.");
         }
         timeSlot.setEvent(event);
         return this.timeSlotRepository.save(timeSlot);
@@ -52,8 +52,8 @@ public class TimeSlotService {
     @Transactional
     public TimeSlotDTO updateTimeSlot(final TimeSlotDTO timeSlotDTO) {
         TimeSlot timeSlot = timeSlotRepository.findById(timeSlotDTO.getId())
-                .orElseThrow(() -> new TimeSlotException(String.format("timeslot with id : %s  not found", timeSlotDTO.getId())));
-        this.validTimeSlot(timeSlot, timeSlot.getEvent());
+                .orElseThrow(() -> new TimeSlotException(String.format("La Seccion con id : %s no fue encontrada.", timeSlotDTO.getId())));
+        this.validTimeSlot(this.convertToDTO(timeSlot), timeSlot.getEvent());
         timeSlot.setStartTime(timeSlotDTO.getStartTime());
         timeSlot.setEndTime(timeSlotDTO.getEndTime());
         List<AttendanceDTO> attendanceDTOs = timeSlotDTO.getAttendances();
@@ -69,24 +69,27 @@ public class TimeSlotService {
         return convertToDTO(timeSlotRepository.save(timeSlot));
     }
 
-    private static void validTimeSlot(final TimeSlot timeSlot, Event event) {
-
-        if(timeSlot.getEndTime() == null || timeSlot.getStartTime() == null){
-            throw new TimeSlotException("timeSlot need to have endTime and startTime.");
+    public void validTimeSlot(final TimeSlotDTO timeSlot, Event event) {
+        if (!StringUtils.hasText(timeSlot.getName())) {
+            throw new TimeSlotException("La seccion necesita un nombre.");
         }
-        if(!StringUtils.hasText(timeSlot.getName())){
-            throw new TimeSlotException("timeSlot need a name.");
+        if (timeSlot.getEndTime() == null || timeSlot.getStartTime() == null) {
+            throw new TimeSlotException("La seccion debe tener hora de inicio y finalizacion.");
         }
         if (timeSlot.getStartTime().isAfter(timeSlot.getEndTime())) {
-            throw new TimeSlotException(String.format("timeslot start time can´t be after end time startTime: %s, endTime: %s", timeSlot.getStartTime(), timeSlot.getEndTime()));
+            throw new TimeSlotException(String.format("La hora de inicio de la seccion no puede ser despues de la hora de finalizacion. Hora de inicio: %s, Hora de finalizacion: %s.", timeSlot.getStartTime(), timeSlot.getEndTime()));
         }
         if (timeSlot.getStartTime().isBefore(event.getStartTime())) {
-            throw new TimeSlotException(String.format("timeslot start time can't be before the start time of the event. Event startTime: %s, TimeSlot startTime: %s",
-                    timeSlot.getEvent().getStartTime(), timeSlot.getStartTime()));
+            throw new TimeSlotException(String.format("La hora de inicio de la seccion no puede ser antes de la hora de inicio del evento. Hora de inicio de la seccion: %s, Hora de inicio del evento: %s.",
+                    timeSlot.getStartTime(), event.getStartTime()));
         }
         if (timeSlot.getStartTime().isAfter(event.getEndTime())) {
-            throw new TimeSlotException(String.format("timeslot end time can't be after end time of the event endTime. Event endTime: %s, TimeSlot endTime: %s",
-                    timeSlot.getEvent().getStartTime(), timeSlot.getStartTime()));
+            throw new TimeSlotException(String.format("La hora de inicio de la seccion no puede ser despues de la hora de finalizacion del evento. Hora de inicio de seccion: %s, Hora de finalizacion del evento: %s",
+                    timeSlot.getStartTime(), event.getEndTime()));
+        }
+        if (timeSlot.getEndTime().isAfter(event.getEndTime())) {
+            throw new TimeSlotException(String.format("La hora de finalizacion de la seccion no puede ser despues de la hora de finalizacion del evento. Hora de finalizacion de la seccion: %s, Hora de finalizacion del evento: %s.",
+                    timeSlot.getEndTime(), event.getEndTime()));
         }
     }
 

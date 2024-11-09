@@ -40,7 +40,7 @@ public class EventService {
         List<Event> events = this.eventRepository.findAll();
         Event founded = events.stream().filter(e -> e.getName().equalsIgnoreCase(event.getName())).findFirst().orElse(null);
         if (founded != null) {
-            throw new EventException("Event with name " + event.getName() + " already exists");
+            throw new EventException("Evento con nombre: " + event.getName() + " ya existe.");
         }
         Event savedEvent = this.eventRepository.save(event);
         return this.convertToDTO(savedEvent);
@@ -48,22 +48,22 @@ public class EventService {
 
     private static void validEvent(Event event) {
         if (event.getEndTime() == null || event.getStartTime() == null) {
-            throw new EventException("the event need to have endTime and startTime.");
+            throw new EventException("El evento requiere una hora de inicio y finalizacion.");
         }
         if (!StringUtils.hasText(event.getName())) {
-            throw new EventException("the event need a name.");
+            throw new EventException("El evento requiere un nombre.");
         }
         if (event.getStartTime().isAfter(event.getEndTime())) {
-            throw new EventException(String.format("event start time can´t be after end time startTime: %s, endTime: %s", event.getStartTime(),
+            throw new EventException(String.format("La hora de inicio del evento no puede ser despues de la hora de finalizacion. Hora de inicio: %s, Hora de finalizacion: %s", event.getStartTime(),
                     event.getEndTime()));
         }
         if (event.getEndTime().isBefore(event.getStartTime())) {
-            throw new EventException(String.format("event start time can't be before start time. startTime: %s, TimeSlot startTime: %s",
+            throw new EventException(String.format("La hora de finalizacion del evento no puede ser antes que la hora de comienzo. Hora de inicio: %s, Hora de finalizacion: %s",
                     event.getStartTime(), event.getStartTime()));
         }
         LocalDate now = LocalDate.now();
         if (event.getDate() == null || event.getDate().isBefore(now)) {
-            throw new EventException(String.format("event date can't be empty or be before today. date: %s today: %s", event.getDate(), now));
+            throw new EventException(String.format("La fecha del evento no puede estar vacia o ser antes a hoy. Fecha: %s Fecha de hoy: %s", event.getDate(), now));
         }
     }
 
@@ -76,7 +76,8 @@ public class EventService {
     @Transactional
     public TimeSlotDTO saveTimeSlot(final Long eventId, final TimeSlotDTO timeSlotDTO) {
         Event event = this.eventRepository.findById(eventId)
-                .orElseThrow(() -> new EventException(String.format("Event with id : %s not found", eventId)));
+                .orElseThrow(() -> new EventException(String.format("Evento con id : %s no encontrado", eventId)));
+        this.timeSlotService.validTimeSlot(timeSlotDTO, event);
         TimeSlot timeSlot = this.timeSlotService.save(event, timeSlotDTO);
         event.getTimeSlots().add(timeSlot);
         return this.timeSlotService.convertToDTO(timeSlot);
@@ -89,7 +90,7 @@ public class EventService {
      */
     public EventDTO getEvent(long id) {
         Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new EventException(String.format("Event with id : %s  not found", id)));
+                .orElseThrow(() -> new EventException(String.format("Evento con id : %s  no encontrado", id)));
         return convertToDTO(event);
     }
 
@@ -109,10 +110,10 @@ public class EventService {
      */
     public void delete(final Long eventId) {
         try {
-            Preconditions.checkNotNull(eventId, "Event id can't be null");
+            Preconditions.checkNotNull(eventId, "Id del evento no puede ser nulo");
             this.eventRepository.deleteById(eventId);
         } catch (Exception e) {
-            throw new EventException("Event with id: " + eventId + " not deleted " + e.getMessage());
+            throw new EventException("Event con id: " + eventId + " no borrado " + e.getMessage());
         }
     }
 

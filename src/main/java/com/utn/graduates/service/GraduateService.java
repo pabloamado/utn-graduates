@@ -48,9 +48,9 @@ public class GraduateService {
             Graduate saved = this.graduateRepository.save(graduate);
             return this.convertToDTO(saved);
         } catch (DataIntegrityViolationException e) {
-            throw new GraduateException("Graduate is repeated");
+            throw new GraduateException("El graduado esta repetido");
         } catch (Exception e) {
-            throw new GraduateException("Graduate not saved " + e.getMessage());
+            throw new GraduateException("El graduado no fue guardado. " + e.getMessage());
         }
     }
 
@@ -81,14 +81,14 @@ public class GraduateService {
 
     public Graduate getGraduateById(Long id) {
         return this.graduateRepository.findById(id)
-                .orElseThrow(() -> new GraduateException(String.format("Graduate with id: %s not found", id)));
+                .orElseThrow(() -> new GraduateException(String.format("Graduado con id: %s no fue encontrado", id)));
     }
 
     @Transactional
     public GraduateDTO updateGraduate(final Long graduateId, final GraduateDTO graduateDTO) {
         try {
             Graduate graduate = this.graduateRepository.findById(graduateId)
-                    .orElseThrow(() -> new GraduateException(String.format("Graduate with id: %s not found", graduateId)));
+                    .orElseThrow(() -> new GraduateException(String.format("Graduado con id: %s no fue encontrado", graduateId)));
             this.validateUpdateGraduate(graduateId, graduateDTO, graduate);
             ContactType contactType = this.contactTypeService.findContactType(graduateDTO.getContactType());
             Specialty specialty = this.specialtyService.findSpecialty(graduateDTO.getSpecialty());
@@ -98,40 +98,40 @@ public class GraduateService {
             graduate.setSpecialty(specialty);
             return this.convertToDTO(this.graduateRepository.save(graduate));
         } catch (Exception e) {
-            throw new GraduateException("Graduate with id: " + graduateId + " not updated " + e.getMessage());
+            throw new GraduateException("Graduado con id: " + graduateId + " no se actualizo. " + e.getMessage());
         }
     }
 
     private void validateSaveGraduate(final GraduateDTO graduateDTO) {
-        Preconditions.checkNotNull(graduateDTO, "Graduate can't be null");
-        Preconditions.checkState(!StringUtils.isEmpty(graduateDTO.getFullname()), "Fullname can't be null or empty");
-        Preconditions.checkState(graduateDTO.getFullname().matches(NAME_REGEX), "Fullname must contain only letters");
-        Preconditions.checkState(!StringUtils.isEmpty(graduateDTO.getDni()), "Dni can't be null or empty");
-        Preconditions.checkState(graduateDTO.getDni().length() == DNI_LENGTH, "Dni length must be 8, without dots");
-        Preconditions.checkNotNull(graduateDTO.getGenre(), "Genre must be present");
+        Preconditions.checkNotNull(graduateDTO, "El graduado no puede ser nulo");
+        Preconditions.checkState(!StringUtils.isEmpty(graduateDTO.getFullname()), "El nombre completo no puede estar vacio");
+        Preconditions.checkState(graduateDTO.getFullname().matches(NAME_REGEX), "El nombre completo debe contener solo letras");
+        Preconditions.checkState(!StringUtils.isEmpty(graduateDTO.getDni()), "El DNI no puede estar vacio");
+        Preconditions.checkState(graduateDTO.getDni().length() == DNI_LENGTH, "La longitud del DNI debe ser de 8 caracteres sin puntos");
+        Preconditions.checkNotNull(graduateDTO.getGenre(), "El genero no puede estar vacio");
         if (graduateDTO.getPhone() != null) {
-            Preconditions.checkState(graduateDTO.getPhone().matches(PHONE_REGEX), "Phone must be numeric and have between 8 and 11 digits");
+            Preconditions.checkState(graduateDTO.getPhone().matches(PHONE_REGEX), "El telefono debe ser numerico y tener entre 8 a 11 digitos");
         }
-        Preconditions.checkNotNull(graduateDTO.getEmail(), "Email must be present");
-        Preconditions.checkState(graduateDTO.getEmail().matches(EMAIL_REGEX), "Email format is invalid and must end with '.com'");
+        Preconditions.checkNotNull(graduateDTO.getEmail(), "El Email no puede estar vacio");
+        Preconditions.checkState(graduateDTO.getEmail().matches(EMAIL_REGEX), "El formato de Email es invalido y debe tenminar con '.com'");
     }
 
     private void validateUpdateGraduate(final Long graduateId, final GraduateDTO graduateDTO, final Graduate graduate) {
-        Preconditions.checkNotNull(graduateId, "GraduateId can't be null");
-        Preconditions.checkNotNull(graduateDTO, "Graduate can't be null");
-        Preconditions.checkState(!StringUtils.isEmpty(graduateDTO.getEmail()), "Email must be present");
-        Preconditions.checkState(graduateDTO.getEmail().matches(EMAIL_REGEX), "Email format is invalid and must end with '.com'");
+        Preconditions.checkNotNull(graduateId, "El Id de graduado no puede ser nulo");
+        Preconditions.checkNotNull(graduateDTO, "El graduado no puede ser nulo");
+        Preconditions.checkState(!StringUtils.isEmpty(graduateDTO.getEmail()), "El Email no puede estar vacio");
+        Preconditions.checkState(graduateDTO.getEmail().matches(EMAIL_REGEX), "El formato de Email es invalido y debe tenminar con '.com'");
         if (graduateDTO.getPhone() != null) {
-            Preconditions.checkState(graduateDTO.getPhone().matches(PHONE_REGEX), "Phone must be numeric and have between 8 and 11 digits");
+            Preconditions.checkState(graduateDTO.getPhone().matches(PHONE_REGEX), "El telefono debe ser numerico y tener entre 8 a 11 digitos");
         }
     }
 
     public void delete(final Long graduateId) {
         try {
-            Preconditions.checkNotNull(graduateId, "GraduateId can't be null");
+            Preconditions.checkNotNull(graduateId, "El Id de graduado no puede ser nulo");
             this.graduateRepository.deleteById(graduateId);
         } catch (Exception e) {
-            throw new GraduateException("Graduate with id: " + graduateId + " not deleted " + e.getMessage());
+            throw new GraduateException("Graduado con id: " + graduateId + " no fue borrado. " + e.getMessage());
         }
     }
 }

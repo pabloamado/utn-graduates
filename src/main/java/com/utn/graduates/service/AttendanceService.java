@@ -44,7 +44,7 @@ public class AttendanceService {
     @Transactional
     public AttendanceDTO updatePresent(AttendanceDTO attendanceDTO) {
         Attendance attendance = attendanceRepository.findById(attendanceDTO.getId()).orElseThrow(() ->
-                new AttendanceException(String.format("Attendance with id: %s not found", attendanceDTO.getId())));
+                new AttendanceException(String.format("La asistencia con id: %s no fue encontrada", attendanceDTO.getId())));
         attendance.setPresent(attendanceDTO.isPresent());
         return this.convertToDTO(attendance);
     }
