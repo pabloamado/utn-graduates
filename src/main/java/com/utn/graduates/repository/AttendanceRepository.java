@@ -12,4 +12,6 @@ import java.util.List;
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     @Query("SELECT a FROM Attendance a where a.timeSlot.id = :timeSlotId")
     List<Attendance> findAllByTimeSlotId(@Param("timeSlotId") Long timeSlotId);
+
+    List<Attendance> findByGraduateId(Long graduateId);
 }

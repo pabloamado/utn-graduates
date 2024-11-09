@@ -2,11 +2,13 @@ package com.utn.graduates.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
+import com.utn.graduates.model.Attendance;
 import com.utn.graduates.model.ContactType;
 import com.utn.graduates.dto.GraduateDTO;
 import com.utn.graduates.exception.GraduateException;
 import com.utn.graduates.model.Graduate;
 import com.utn.graduates.model.Specialty;
+import com.utn.graduates.repository.AttendanceRepository;
 import com.utn.graduates.repository.GraduateRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -25,16 +28,20 @@ public class GraduateService {
     private final GraduateRepository graduateRepository;
     private final ContactTypeService contactTypeService;
     private final SpecialtyService specialtyService;
+    private final AttendanceRepository attendanceRepository;
+
     private static final String DNI_REGEX = "\\d{8}";
     private static final String PHONE_REGEX = "\\d{8,11}";
     private static final String NAME_REGEX = "^[a-zA-Z]+(\\s[a-zA-Z]+)*$";
     private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.com$";
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public GraduateService(GraduateRepository graduateRepository, ContactTypeService contactTypeService, SpecialtyService specialtyService) {
+    public GraduateService(GraduateRepository graduateRepository, ContactTypeService contactTypeService, SpecialtyService specialtyService,
+                           AttendanceRepository attendanceRepository) {
         this.graduateRepository = graduateRepository;
         this.contactTypeService = contactTypeService;
         this.specialtyService = specialtyService;
+        this.attendanceRepository = attendanceRepository;
     }
 
     @Transactional
@@ -111,25 +118,34 @@ public class GraduateService {
         Preconditions.checkState(graduateDTO.getDni().matches(DNI_REGEX), "El DNI debe ser numerico y tener 8 digitos");
         Preconditions.checkNotNull(graduateDTO.getGenre(), "El genero no puede estar vacio");
         if (graduateDTO.getPhone() != null) {
-            Preconditions.checkState(graduateDTO.getPhone().matches(PHONE_REGEX), "El telefono debe ser numerico y tener entre 8 a 11 digitos");
+            Preconditions.checkState(graduateDTO.getPhone()
+                    .matches(PHONE_REGEX), "El telefono debe ser numerico y tener entre 8 a 11 digitos");
         }
         Preconditions.checkNotNull(graduateDTO.getEmail(), "El Email no puede estar vacio");
         Preconditions.checkState(graduateDTO.getEmail().matches(EMAIL_REGEX), "El formato de Email es invalido y debe tenminar con '.com'");
     }
 
-    private void validateUpdateGraduate(final Long graduateId, final GraduateDTO graduateDTO ) {
+    private void validateUpdateGraduate(final Long graduateId, final GraduateDTO graduateDTO) {
         Preconditions.checkNotNull(graduateId, "El Id de graduado no puede ser nulo");
         Preconditions.checkNotNull(graduateDTO, "El graduado no puede ser nulo");
         Preconditions.checkState(!StringUtils.isEmpty(graduateDTO.getEmail()), "El Email no puede estar vacio");
         Preconditions.checkState(graduateDTO.getEmail().matches(EMAIL_REGEX), "El formato de Email es invalido y debe tenminar con '.com'");
         if (graduateDTO.getPhone() != null) {
-            Preconditions.checkState(graduateDTO.getPhone().matches(PHONE_REGEX), "El telefono debe ser numerico y tener entre 8 a 11 digitos");
+            Preconditions.checkState(graduateDTO.getPhone()
+                    .matches(PHONE_REGEX), "El telefono debe ser numerico y tener entre 8 a 11 digitos");
         }
     }
 
     public void delete(final Long graduateId) {
         try {
             Preconditions.checkNotNull(graduateId, "El Id de graduado no puede ser nulo");
+            List<Attendance> graduateAttendances = attendanceRepository.findByGraduateId(graduateId);
+            if (!CollectionUtils.isEmpty(graduateAttendances)) {
+                graduateAttendances.forEach(attendance -> {
+                    attendance.getTimeSlot().getAttendances().remove(attendance);
+                    attendanceRepository.deleteById(attendance.getId());
+                });
+            }
             this.graduateRepository.deleteById(graduateId);
         } catch (Exception e) {
             throw new GraduateException("Graduado con id: " + graduateId + " no fue borrado. " + e.getMessage());
