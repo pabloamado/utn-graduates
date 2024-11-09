@@ -90,7 +90,7 @@ public class GraduateService {
         try {
             Graduate graduate = this.graduateRepository.findById(graduateId)
                     .orElseThrow(() -> new GraduateException(String.format("Graduado con id: %s no fue encontrado", graduateId)));
-            this.validateUpdateGraduate(graduateId, graduateDTO, graduate);
+            this.validateUpdateGraduate(graduateId, graduateDTO);
             ContactType contactType = this.contactTypeService.findContactType(graduateDTO.getContactType());
             Specialty specialty = this.specialtyService.findSpecialty(graduateDTO.getSpecialty());
             graduate.setContactType(contactType);
@@ -117,7 +117,7 @@ public class GraduateService {
         Preconditions.checkState(graduateDTO.getEmail().matches(EMAIL_REGEX), "El formato de Email es invalido y debe tenminar con '.com'");
     }
 
-    private void validateUpdateGraduate(final Long graduateId, final GraduateDTO graduateDTO, final Graduate graduate) {
+    private void validateUpdateGraduate(final Long graduateId, final GraduateDTO graduateDTO ) {
         Preconditions.checkNotNull(graduateId, "El Id de graduado no puede ser nulo");
         Preconditions.checkNotNull(graduateDTO, "El graduado no puede ser nulo");
         Preconditions.checkState(!StringUtils.isEmpty(graduateDTO.getEmail()), "El Email no puede estar vacio");
