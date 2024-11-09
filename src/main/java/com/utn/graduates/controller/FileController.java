@@ -25,6 +25,6 @@ public class FileController {
     @PostMapping
     public ResponseEntity<String> importGraduatesFromCsv(@RequestParam("file") MultipartFile file) {
         LOGGER.info("Trying to import graduates from csv file: {}", file.getName());
-        return new ResponseEntity<>(String.format("Registers saved %s", fileService.importGraduatesFromCsv(file)), HttpStatus.OK);
+        return new ResponseEntity<>(String.format("Registros guardados %s", fileService.importGraduatesFromCsv(file)), HttpStatus.OK);
     }
 }
