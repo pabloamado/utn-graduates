@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,7 +25,7 @@ public class GraduateService {
     private final GraduateRepository graduateRepository;
     private final ContactTypeService contactTypeService;
     private final SpecialtyService specialtyService;
-    private static final int DNI_LENGTH = 8;
+    private static final String DNI_REGEX = "\\d{8}";
     private static final String PHONE_REGEX = "\\d{8,11}";
     private static final String NAME_REGEX = "^[a-zA-Z]+(\\s[a-zA-Z]+)*$";
     private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.com$";
@@ -102,12 +103,12 @@ public class GraduateService {
         }
     }
 
-    private void validateSaveGraduate(final GraduateDTO graduateDTO) {
+    public void validateSaveGraduate(final GraduateDTO graduateDTO) {
         Preconditions.checkNotNull(graduateDTO, "El graduado no puede ser nulo");
         Preconditions.checkState(!StringUtils.isEmpty(graduateDTO.getFullname()), "El nombre completo no puede estar vacio");
         Preconditions.checkState(graduateDTO.getFullname().matches(NAME_REGEX), "El nombre completo debe contener solo letras");
         Preconditions.checkState(!StringUtils.isEmpty(graduateDTO.getDni()), "El DNI no puede estar vacio");
-        Preconditions.checkState(graduateDTO.getDni().length() == DNI_LENGTH, "La longitud del DNI debe ser de 8 caracteres sin puntos");
+        Preconditions.checkState(graduateDTO.getDni().matches(DNI_REGEX), "El DNI debe ser numerico y tener 8 digitos");
         Preconditions.checkNotNull(graduateDTO.getGenre(), "El genero no puede estar vacio");
         if (graduateDTO.getPhone() != null) {
             Preconditions.checkState(graduateDTO.getPhone().matches(PHONE_REGEX), "El telefono debe ser numerico y tener entre 8 a 11 digitos");
@@ -133,5 +134,13 @@ public class GraduateService {
         } catch (Exception e) {
             throw new GraduateException("Graduado con id: " + graduateId + " no fue borrado. " + e.getMessage());
         }
+    }
+
+    public void saveAll(final Set<Graduate> graduates) {
+        this.graduateRepository.saveAll(graduates);
+    }
+
+    public Set<String> findAllDni() {
+        return this.graduateRepository.findAllDni();
     }
 }

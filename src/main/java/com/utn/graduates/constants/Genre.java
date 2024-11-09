@@ -20,9 +20,10 @@ public enum Genre {
         return translation;
     }
 
-    public static Genre valueFromFields(String value){
-        for(Genre genre : Genre.values()){
-            if(genre.getInitial().equalsIgnoreCase(value) || genre.getTranslation().equalsIgnoreCase(value)){
+    public static Genre valueFromFields(String value) {
+        for (Genre genre : Genre.values()) {
+            if (genre.getInitial().equalsIgnoreCase(value) || genre.getTranslation().equalsIgnoreCase(value) || genre.name()
+                    .equalsIgnoreCase(value)) {
                 return genre;
             }
         }

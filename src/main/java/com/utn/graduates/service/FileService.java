@@ -39,12 +39,12 @@ public class FileService {
     private static final String SEMICOLON = ";";
     private static final String COMMA = ",";
 
-    private final GraduateRepository graduateRepository;
+    private final GraduateService graduateService;
     private final SpecialtyService specialtyService;
     private final ContactTypeService contactTypeService;
 
-    public FileService(GraduateRepository graduateRepository, SpecialtyService specialtyService, ContactTypeService contactTypeService) {
-        this.graduateRepository = graduateRepository;
+    public FileService(GraduateService graduateService, SpecialtyService specialtyService, ContactTypeService contactTypeService) {
+        this.graduateService = graduateService;
         this.specialtyService = specialtyService;
         this.contactTypeService = contactTypeService;
     }
@@ -52,7 +52,7 @@ public class FileService {
     @Transactional
     public int importGraduatesFromCsv(final MultipartFile file) {
         Set<Graduate> graduates = new HashSet<>();
-        Set<String> existingDni = graduateRepository.findAllDni();
+        Set<String> existingDni = graduateService.findAllDni();
         Set<String> csvDni = new HashSet<>();
         List<String> specialties = this.specialtyService.getSpecialties();
         List<String> contactTypes = this.contactTypeService.getContactTypes();
@@ -78,25 +78,25 @@ public class FileService {
                 Graduate graduate = this.convertToEntity(graduateData, dni);
                 this.checkField(graduate.getSpecialty().getName(), specialties);
                 this.checkField(graduate.getContactType().getName(), contactTypes);
-
+                this.graduateService.validateSaveGraduate(this.graduateService.convertToDTO(graduate));
                 graduates.add(graduate);
                 csvDni.add(dni);
             }
 
             Preconditions.checkState(!CollectionUtils.isEmpty(graduates), "Los registros a guardar estan vacios.");
-            graduateRepository.saveAll(graduates);
+            graduateService.saveAll(graduates);
             LOGGER.info("Guardados exitosamente {} registros.", graduates.size());
         } catch (Exception e) {
             LOGGER.error("Hubo un error al importar los registros desde el archivo CSV.", e);
-            throw new FileException(String.format("Fallo al importar los registros desde el archivo CSV. Error: %s", e));
+            throw new FileException(String.format("Fallo al importar los registros desde el archivo CSV. Error: %s Linea: %s", e, lineNumber));
         }
 
         return graduates.size();
     }
 
     private void checkField(final String field, final List<String> list) {
-        Preconditions.checkState(!CollectionUtils.isEmpty(list), "The field " + field + " doesn´t exists, please create it first");
-        Preconditions.checkState(list.contains(field), "The field " + field + " doesn´t exists, please create it first");
+        Preconditions.checkState(!CollectionUtils.isEmpty(list), "El campo " + field + " no existe, debe crearlo primero");
+        Preconditions.checkState(list.contains(field), "El campo " + field + " no existe, debe crearlo primero");
     }
 
     private Graduate convertToEntity(final Map<String, String> graduateData, final String dni) {
