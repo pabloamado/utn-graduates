@@ -100,6 +100,12 @@ public class GraduateService {
             this.validateUpdateGraduate(graduateId, graduateDTO);
             ContactType contactType = this.contactTypeService.findContactType(graduateDTO.getContactType());
             Specialty specialty = this.specialtyService.findSpecialty(graduateDTO.getSpecialty());
+            if (!graduate.getEmail().equalsIgnoreCase(graduateDTO.getEmail())) {
+                graduateRepository.findByEmail(graduateDTO.getEmail()).ifPresent(g -> {
+                            throw new GraduateException("El Email ingresado ya esta registrado.");
+                        }
+                );
+            }
             graduate.setContactType(contactType);
             graduate.setEmail(graduateDTO.getEmail());
             graduate.setPhone(graduateDTO.getPhone());

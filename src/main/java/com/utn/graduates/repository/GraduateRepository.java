@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -18,4 +19,6 @@ public interface GraduateRepository extends JpaRepository<Graduate, Long> {
 
     @Query("SELECT g.dni FROM Graduate g")
     Set<String> findAllDni();
+
+    Optional<Graduate> findByEmail(String email);
 }
