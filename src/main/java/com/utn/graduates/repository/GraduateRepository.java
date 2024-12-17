@@ -14,7 +14,7 @@ import java.util.Set;
 @Repository
 public interface GraduateRepository extends JpaRepository<Graduate, Long> {
 
-    @Query("SELECT g FROM Graduate g WHERE g.fullname LIKE %:param% or g.dni LIKE %:param% or g.email LIKE %:param%")
+    @Query("SELECT g FROM Graduate g WHERE g.fullname LIKE %:param% or g.dni LIKE %:param% or g.email LIKE %:param% or g.phone LIKE %:param%")
     Page<Graduate> findByParam(@Param("param") String param, Pageable pageable);
 
     @Query("SELECT g.dni FROM Graduate g")
