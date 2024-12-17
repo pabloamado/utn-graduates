@@ -85,8 +85,8 @@ public class FileService {
                 }
 
                 String dni = graduateData.get(DNI);
-                Preconditions.checkState(!csvDni.contains(dni), "El registro  a guardar esta duplicado en el archivo, revise el archivo en la linea: " + lineNumber);
-                Preconditions.checkState(!existingDni.contains(dni), String.format("El registro en la linea %s ya existe.", lineNumber));
+                Preconditions.checkState(!csvDni.contains(dni), "El registro  a guardar esta duplicado, registro: %s ", line);
+                Preconditions.checkState(!existingDni.contains(dni), String.format("El registro ya existe, registro: %s ", line));
                 Graduate graduate = this.convertToEntity(graduateData, dni);
                 this.checkField(graduate.getSpecialty().getName(), specialties);
                 this.checkField(graduate.getContactType().getName(), contactTypes);
