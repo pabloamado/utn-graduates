@@ -6,7 +6,6 @@ import com.utn.graduates.constants.Genre;
 import com.utn.graduates.exception.FileException;
 import com.utn.graduates.model.Graduate;
 import com.utn.graduates.model.Specialty;
-import com.utn.graduates.repository.GraduateRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -24,6 +23,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class FileService {
@@ -63,15 +64,26 @@ public class FileService {
             String line = reader.readLine();
             this.validateCsvColumns(line.toLowerCase());
             Map<String, String> graduateData = new HashMap<>();
+            String[] headerColumns = line.toLowerCase().split(SEMICOLON);
+            Map<String, Integer> columnIndexMap =
+                    IntStream.range(0, headerColumns.length)
+                            .boxed()
+                            .collect(Collectors.toMap(i -> headerColumns[i], i -> i));
 
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
+                Preconditions.checkState(!line.contains(COMMA), "Error de formato: No coincide el numero de campos obligatorios registro: " + line);
                 String[] fields = line.split(SEMICOLON);
-                Preconditions.checkState(fields.length == requiredCsvColumns.length, "CSV format error: mismatched number of mandatory fields in line: " + line);
+                Preconditions.checkState(fields.length >= requiredCsvColumns.length, "Error de formato: No coincide el numero de campos obligatorios registro: " + line);
+                Preconditions.checkState(fields.length == headerColumns.length, "Error de formato: No coincide el numero de campos con el numero de columnas  registro: " + line);
 
-                for (int i = 0; i < requiredCsvColumns.length; i++) {
-                    graduateData.put(requiredCsvColumns[i], fields[i].trim());
+                for (String column : columnIndexMap.keySet()) {
+                    int index = columnIndexMap.get(column);
+                    if (index < fields.length) {
+                        graduateData.put(column, fields[index].trim());
+                    }
                 }
+
                 String dni = graduateData.get(DNI);
                 Preconditions.checkState(!csvDni.contains(dni), "El registro  a guardar esta duplicado en el archivo, revise el archivo en la linea: " + lineNumber);
                 Preconditions.checkState(!existingDni.contains(dni), String.format("El registro en la linea %s ya existe.", lineNumber));
@@ -88,7 +100,7 @@ public class FileService {
             LOGGER.info("Guardados exitosamente {} registros.", graduates.size());
         } catch (Exception e) {
             LOGGER.error("Hubo un error al importar los registros desde el archivo CSV.", e);
-            throw new FileException(String.format("Fallo al importar los registros desde el archivo CSV. Error: %s Linea: %s", e, lineNumber));
+            throw new FileException(String.format("Fallo al importar los registros desde el archivo. Error: %s Linea: %s", e, lineNumber));
         }
 
         return graduates.size();
@@ -113,7 +125,7 @@ public class FileService {
 
     private void validateCsvColumns(String line) {
         Preconditions.checkState(StringUtils.hasText(line), "Faltan columnas obligatorias en el archivo CSV.");
-        Preconditions.checkState(!line.contains(COMMA), "Formato de archivo CSV invalido, las columnas deben estar separadas por ';' linea: " + line);
+        Preconditions.checkState(!line.contains(COMMA), "Las columnas deben estar separadas por ';' linea: " + line);
         String[] columns = line.split(SEMICOLON);
         List<String> presentColumns = Arrays.asList(columns);
         for (String requiredColumn : requiredCsvColumns) {
